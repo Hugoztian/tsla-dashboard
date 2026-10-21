@@ -254,12 +254,12 @@ function weekCard() {
   const src = (lab, u) => `${esc(lab)} <span style="font-size:12px">${ext(u)}</span>`;
   const li = D.week.map(r => `<li><span class="mut" style="font-size:12px">${esc(r[0])} · ${esc(r[1])}</span><br>${src(r[2], r[3])}</li>`).join('');
   const nx = D.next.map(r => `<li><b>${esc(r[0])}</b> · ${esc(r[1])}</li>`).join('');
-  return card('wk', 'What changed this week', '21 Oct 2026 · last 7 days · newest first', `<div class="grid g2"><div><ul class="lst">${li}</ul></div><div><h3 style="margin-top:0">Coming up</h3><ul class="lst">${nx}</ul></div></div>`);
+  return card('wk', 'What changed this week', '22 Oct 2026 · last 7 days · newest first', `<div class="grid g2"><div><ul class="lst">${li}</ul></div><div><h3 style="margin-top:0">Coming up</h3><ul class="lst">${nx}</ul></div></div>`);
 }
 function promiseCard(filter) {
   const rows = D.promises.filter(r => !filter || filter.includes(r[2]));
   const n = k => rows.filter(r => r[5].startsWith(k)).length;
-  return card('promise' + (filter ? filter[0].replace(/\W/g, '') : ''), filter ? 'Promises vs reality' : 'Elon & Tesla promise tracker', 'dated claims scored 21 Oct 2026',
+  return card('promise' + (filter ? filter[0].replace(/\W/g, '') : ''), filter ? 'Promises vs reality' : 'Elon & Tesla promise tracker', 'dated claims scored 22 Oct 2026',
     `<div class="grid g3" style="margin-bottom:12px">${kpi('Met', String(n('Met')), 'of ' + rows.length + ' claims')}${kpi('Behind', String(n('Behind')), 'missed or off track')}${kpi('Pending', String(n('Pending')), 'deadline still ahead')}</div>` +
     tableBlock({columns: ['Said', 'Claim', 'Topic', 'Deadline', 'Where it stands', 'Score', 'Source'], rows}, {wrap: true, notes: ['Claims are paraphrased from the cited source unless quoted. “Met (late)” = delivered after the stated date.']}));
 }
@@ -272,31 +272,32 @@ function hero() {
     `<div class="hcard live"><div id="lq" class="lq" aria-live="polite" style="display:none"><div class="lq-top"><span class="lq-sess"><i class="lq-dot"></i><span id="lq-sl">Connecting to live quote…</span></span><span class="lq-sym">TSLA · Nasdaq</span></div>
        <div class="lq-row"><span class="lq-k" id="lq-k"></span><span class="lq-px" id="lq-px">—</span><span class="lq-ch" id="lq-ch"></span></div><div class="lq-sub" id="lq-sub"></div><div class="lq-cap" id="lq-cap"></div></div>
      <div id="tvwrap" class="tvwrap" style="display:none"><div class="l" style="padding:2px 4px 0"><i class="livedot"></i> Live stock price ${info('Live price', 'Real-time box via the shared quote relay, refreshed every 15 s; if it is unavailable, TradingView\'s delayed (~15 min) quote is shown instead.')}</div><div class="tvq" id="tvq"></div><div class="cap" id="tvqcap" style="padding:0 4px">Nasdaq: TSLA · delayed ~15 min · TradingView</div></div></div>`,
-    `<div class="hcard"><div class="l">Q3 2026 results ${info('Earnings', D.meta.next_earnings)}</div><div class="cdv" id="ercd">—</div><div class="ch" style="color:var(--acc)">After US close · Wed 21 Oct</div><div class="s">Consensus revenue US$28.34bn · gross margin 17.9% (Tesla-compiled, 23 analysts)</div><div class="asof"><a href="#catalysts">Catalyst calendar →</a></div></div>`,
+    `<div class="hcard"><div class="l">Q3 2026 results ${info('Earnings', D.meta.next_earnings)}</div><div class="v">US$${fmt(F.rev[5] / 1000, 2)}bn</div><div class="ch">Non-GAAP EPS US$${fmt(F.eps_ng[5], 2)} vs ~US$${fmt(D.actual.street_eps, 2)} Street</div><div class="s">Gross margin ${F.tgm[5]}% · op. margin ${F.opm[5]}% · FCF ${mm(F.fcf[5])}</div><div class="asof">Reported 21 Oct 2026 · ${ext(U.q3deck, 'Q3 update')}</div></div>`,
     `<div class="hcard"><div class="l">Market cap</div><div class="v" id="mc-v">US$${fmt(P.mcap_bn / 1000, 2)}tn</div><div class="ch mut">EV US$${fmt(P.ev_bn / 1000, 2)}tn · P/E ${fmt(P.pe, 0)}x</div><div class="s" id="mc-s">${fmt(P.shares_bn, 2)}bn shares × US$${fmt(P.close, 2)}</div><div class="asof">Close ${esc(dlong(P.close_date))} · ${ext(P.src, 'StockAnalysis')}</div></div>`,
     `<div class="hcard"><div class="l">Q3 2026 deliveries</div><div class="v">${fmt(O.deliv[6])}</div><div class="ch neg">${pct((O.deliv[6] / O.deliv[2] - 1) * 100)} YoY</div><div class="s">${pct((O.deliv[6] / O.deliv[5] - 1) * 100)} QoQ · production ${fmt(O.prod[6])} · storage ${O.storage[6]} GWh</div><div class="asof">P&D release, 2 Oct 2026</div></div>`].join('');
   $('#hero2').innerHTML = [
-    `<div class="mini"><div class="l">Active FSD subscriptions</div><div class="v">1.48m</div><div class="s">Q2 2026 · +56% YoY · &gt;55% NA attach</div></div>`,
+    `<div class="mini"><div class="l">Active FSD subscriptions</div><div class="v">1.74m</div><div class="s">Q3 2026 · +67% YoY · &gt;75% NA paid attach</div></div>`,
     `<div class="mini"><div class="l">Cybercabs in Austin</div><div class="v">300+</div><div class="s">10 Oct 2026 · 8x in 30 days · <a href="#robotaxi">Robotaxi tab</a></div></div>`,
     `<div class="mini"><div class="l">Elon Musk stake</div><div class="v">${fmt(D.musk.own_pct, 2)}%</div><div class="s">${fmt(D.musk.own_m, 1)}m shares · plus 423.7m-share 2025 award · <a href="#own">Ownership</a></div></div>`,
     `<div class="mini"><div class="l">SpaceX–Tesla merger</div><div class="v">Under review</div><div class="s">Special committees formed 20 Oct · no terms</div></div>`].join('');
   try { I18N.apply($('#hero4')); I18N.apply($('#hero2')); } catch (e) { console.error('i18n hero', e); }
-  const cd = () => { const el = $('#ercd'); if (el) el.innerHTML = cdText(new Date('2026-10-21T16:00:00-04:00')); }; cd(); clearInterval(CDT); CDT = setInterval(cd, 1000);
+  clearInterval(CDT);
   liveQuote();
 }
 
 /* ---------------- overview ---------------- */
 function overview() {
-  const P = D.price, i = 4;
+  const P = D.price, i = 5;
   const keyRows = [
     ['Share price / market cap / EV', `US$${fmt(P.close, 2)} / US$${fmt(P.mcap_bn)}bn / US$${fmt(P.ev_bn)}bn`, `Close ${dlong(P.close_date)}`],
     ['Q3 2026 deliveries / production', `${fmt(O.deliv[6])} / ${fmt(O.prod[6])}`, 'P&D release, 2 Oct 2026'],
     ['Q3 2026 storage deployed', `${O.storage[6]} GWh (record 14.2 GWh in Q4 2025)`, 'P&D release'],
-    ['Q2 2026 revenue / GAAP net income', `${mm(F.rev[i])} (+26% YoY) / ${mm(F.ni[i])}`, 'Q2 2026 update'],
-    ['Q2 2026 auto gross margin ex-credits', `${F.agm_x[i]}% (GAAP ${F.agm[i]}%)`, 'Q2 2026 update'],
-    ['Q2 2026 operating margin / free cash flow', `${F.opm[i]}% / ${mm(F.fcf[i])}`, 'Q2 2026 update'],
-    ['Cash & short-term investments', mm(F.cash[i]), '30 Jun 2026'],
-    ['Active FSD subscriptions', '1.48m', 'Q2 2026'],
+    ['Q3 2026 revenue / GAAP net income', `${mm(F.rev[i])} (${pct((F.rev[i] / F.rev[1] - 1) * 100)} YoY) / ${mm(F.ni[i])}`, 'Q3 2026 update'],
+    ['Q3 2026 EPS diluted (GAAP / non-GAAP)', `US$${fmt(F.eps[i], 2)} / US$${fmt(F.eps_ng[i], 2)}`, 'Q3 2026 update'],
+    ['Q3 2026 auto gross margin ex-credits', `${F.agm_x[i]}% (GAAP ${F.agm[i]}%)`, 'Q3 2026 update'],
+    ['Q3 2026 operating margin / free cash flow', `${F.opm[i]}% / ${mm(F.fcf[i])}`, 'Q3 2026 update'],
+    ['Cash & short-term investments', mm(F.cash[i]), '30 Sep 2026'],
+    ['Active FSD subscriptions', '1.74m', 'Q3 2026'],
     ['P/E (trailing / forward) · EV/sales', `${fmt(P.pe, 0)}x / ${fmt(P.fpe, 0)}x · ${P.evs}x`, `Close ${dlong(P.close_date)}`],
     ['Analysts (TipRanks, third-party)', `Moderate Buy · avg target US$${D.street.tip.avg} (${D.street.tip.buy} buy / ${D.street.tip.hold} hold / ${D.street.tip.sell} sell)`, 'Oct 2026'],
     ['Elon Musk', `${D.musk.own_pct}% of shares (${fmt(D.musk.own_m, 1)}m) + 2025 CEO award of 423.7m restricted shares`, 'Jun 2026']];
@@ -307,7 +308,7 @@ function overview() {
     <div class="card"><h3>Key takeaways</h3><ul class="lst">${D.takeaways.map(t => `<li>${esc(t)}</li>`).join('')}</ul><div class="mut" style="font-size:11.5px;margin-top:8px">Sources: Tesla quarterly updates, P&D releases and the tabs of this dashboard.</div></div></div>
   ${weekCard()}
   <div class="card" style="margin:16px 0;border-left:3px solid var(--acc)"><h3 style="margin-top:0">SpaceX–Tesla merger review</h3>${tableBlock({columns: ['Item', 'Status'], rows: [['Status', D.merger.status], ['Terms / exchange ratio', 'pending (not disclosed)'], ['Approval needed', D.merger.vote], ['Source', D.merger.src]]}, {id: 'tMerge', wrap: true})}</div>
-  <div class="grid g2" style="margin-bottom:16px">${ccard('ovDel', 'Deliveries and production by quarter', 'Tesla P&D releases')}${ccard('ovRev', 'Revenue by segment (US$m)', 'Tesla quarterly updates · Q3 2026 pending')}</div>
+  <div class="grid g2" style="margin-bottom:16px">${ccard('ovDel', 'Deliveries and production by quarter', 'Tesla P&D releases')}${ccard('ovRev', 'Revenue by segment (US$m)', 'Tesla quarterly updates')}</div>
   <div class="card"><h3 style="margin-top:0">TSLA live chart <span class="mut" style="font-size:12px;font-weight:400">${TV_SYM} · TradingView</span></h3><div class="tvchart" id="tvchart"></div></div>`;
   delivChart('ovDel'); revChart('ovRev');
   tvEmbed($('#tvchart'), 'advanced-chart', {autosize: true, symbol: TV_SYM, interval: 'D', range: '6M', timezone: 'Asia/Singapore', theme: tvTheme(), style: '1', locale: I18N.tvLocale(),
@@ -320,18 +321,18 @@ function revChart(id) { chart(id, {type: 'bar', data: {labels: D.fcols.map(qs), 
 
 /* ---------------- autos ---------------- */
 function autosTab() {
-  const i = 4;
+  const i = 5, A = D.asp_calc;
   const rows = [['Total production', ...O.prod], ['Total deliveries', ...O.deliv], ['Model 3/Y deliveries', ...O.deliv3y], ['Other models deliveries', ...O.deliv.map((v, k) => v - O.deliv3y[k])], ['Inventory (days of supply)', ...O.dos], ['Cumulative deliveries (m)', ...O.cum_deliv], ['Supercharger stations', ...O.sc_st], ['Supercharger connectors', ...O.sc_con]];
   sec('autos').innerHTML = `<h2>Autos <span class="mut">volumes, margins, regulatory credits, pricing</span></h2>
   <div class="grid g4" style="margin-bottom:16px">
     ${kpi('Q3 2026 deliveries', fmt(O.deliv[6]), `${pct((O.deliv[6] / O.deliv[2] - 1) * 100)} YoY · beat ~462k consensus`, U.q3pdd)}
-    ${kpi('Auto gross margin ex-credits', F.agm_x[i] + '%', `Q2 2026 · GAAP ${F.agm[i]}% · consensus ~18.0%`, U.q2deck)}
-    ${kpi('Regulatory credit revenue', mm(F.credits[i]), `Q2 2026 · vs ${mm(F.credits[0])} a year earlier`, U.q2deck)}
-    ${kpi('Average revenue per vehicle', 'US$' + fmt(D.asp_q2.v), `Q2 2026 · down from US$${fmt(D.asp_q2.prev)} (Reuters)`, D.asp_q2.src)}</div>
+    ${kpi('Auto gross margin ex-credits', F.agm_x[i] + '%', `Q3 2026 · GAAP ${F.agm[i]}% · Q2 ${F.agm_x[i - 1]}%`, U.q3deck)}
+    ${kpi('Regulatory credit revenue', mm(F.credits[i]), `Q3 2026 · vs ${mm(F.credits[1])} a year earlier`, U.q3deck)}
+    ${kpi('Auto sales revenue per vehicle (calc.)', 'US$' + fmt(A.q3), `Q3 2026 · Q2 US$${fmt(A.q2)} · Q3 2025 US$${fmt(A.q3_25)} · excl. leased units`, A.src)}</div>
   <div class="grid g2" style="margin-bottom:16px">${ccard('auDel', 'Deliveries vs production', 'units per quarter')}${ccard('auGm', 'Automotive gross margin (%) and regulatory credits (US$m)', 'GAAP vs ex-credits (non-GAAP)')}</div>
-  ${tableBlock({title: 'Operational summary', columns: ['Metric', ...D.Q], rows}, {id: 'tOps', csvname: 'TSLA operational summary', notes: ['Sources: Tesla Q1 2026 update (Q1 2025) ' + U.q1deck + ' ; Q2 2026 update (Q2 2025–Q2 2026) ' + U.q2deck + ' ; Q3 2026 production & deliveries release ' + U.q3pdd, 'Q3 2026 inventory, Supercharger and cumulative figures arrive with the Q3 update (pending).']})}
-  ${tableBlock({title: 'Automotive revenue and margin', columns: ['US$m', ...D.fcols], rows: [['Automotive sales', ...F.auto_sales], ['Regulatory credits', ...F.credits], ['Leasing', ...F.leasing], ['Total automotive revenue', ...F.auto], ['Automotive cost of revenue', ...F.auto_cogs], ['Auto gross margin (GAAP)', ...F.agm.map(v => v == null ? null : v + '%')], ['Auto gross margin ex-credits', ...F.agm_x.map(v => v == null ? null : v + '%')]]}, {id: 'tAuto', csvname: 'TSLA automotive', notes: ['Source: Tesla Q2 2026 update, statement of operations and GAAP-to-non-GAAP reconciliation ' + U.q2deck, 'Q3 2026: reported after the US close on 21 Oct 2026 (pending in this build).']})}
-  ${tableBlock({title: 'Installed annual capacity (Tesla, Q2 2026)', columns: ['Region', 'Product', 'Capacity', 'Status'], rows: D.capacity}, {id: 'tCap', notes: ['Source: Tesla Q2 2026 update, p. 6 ' + U.q2deck + ' · installed capacity ≠ current production rate.']})}`;
+  ${tableBlock({title: 'Operational summary', columns: ['Metric', ...D.Q], rows}, {id: 'tOps', csvname: 'TSLA operational summary', notes: ['Sources: Tesla Q1 2026 update (Q1 2025) ' + U.q1deck + ' ; Q2 2026 update (Q2 2025–Q2 2026) ' + U.q2deck + ' ; Q3 2026 production & deliveries release ' + U.q3pdd, 'Q3 2026: Tesla Q3 2026 update ' + U.q3deck]})}
+  ${tableBlock({title: 'Automotive revenue and margin', columns: ['US$m', ...D.fcols], rows: [['Automotive sales', ...F.auto_sales], ['Regulatory credits', ...F.credits], ['Leasing', ...F.leasing], ['Total automotive revenue', ...F.auto], ['Automotive cost of revenue', ...F.auto_cogs], ['Auto gross margin (GAAP)', ...F.agm.map(v => v == null ? null : v + '%')], ['Auto gross margin ex-credits', ...F.agm_x.map(v => v == null ? null : v + '%')]]}, {id: 'tAuto', csvname: 'TSLA automotive', notes: ['Source: Tesla Q3 2026 update (Q3 2025–Q3 2026), statement of operations and GAAP-to-non-GAAP reconciliation ' + U.q3deck + ' ; Q2 2025 from the Q2 2026 update ' + U.q2deck, 'Revenue per vehicle (calc.) = automotive sales revenue ÷ (deliveries − deliveries under operating lease); it includes FSD and other ancillary sales, so it is not Tesla’s own ASP (Tesla does not disclose one).']})}
+  ${tableBlock({title: 'Installed annual capacity (Tesla, Q3 2026)', columns: ['Region', 'Product', 'Capacity', 'Status'], rows: D.capacity}, {id: 'tCap', notes: ['Source: Tesla Q3 2026 update, p. 6 ' + U.q3deck + ' · installed capacity ≠ current production rate.']})}`;
   delivChart('auDel');
   chart('auGm', {data: {labels: D.fcols.map(qs), datasets: [{type: 'line', label: 'Auto GM (GAAP) %', data: F.agm, borderColor: C.g2, backgroundColor: C.g2, yAxisID: 'y'}, {type: 'line', label: 'Auto GM ex-credits %', data: F.agm_x, borderColor: C.acc, backgroundColor: C.acc, yAxisID: 'y'}, {type: 'bar', label: 'Regulatory credits (US$m)', data: F.credits, backgroundColor: C.g3, yAxisID: 'y1'}]},
     options: {scales: {y: {ticks: {callback: v => v + '%'}}, y1: {position: 'right', grid: {display: false}}}}});
@@ -344,10 +345,10 @@ function energyTab() {
   <div class="grid g4" style="margin-bottom:16px">
     ${kpi('Q3 2026 storage deployed', O.storage[6] + ' GWh', `2nd-best quarter · ${pct((O.storage[6] / O.storage[2] - 1) * 100)} YoY · consensus ~15.9 GWh`, U.q3pdd)}
     ${kpi('2025 deployments', '46.7 GWh', 'full year (record)', U.q4pdd)}
-    ${kpi('Energy revenue', mm(F.energy[4]), 'Q2 2026 · +13% YoY', U.q2deck)}
-    ${kpi('Energy gross margin (calc.)', em[4] + '%', `Q2 2026 · ${em[3]}% in Q1 · vendor cell warranty charge`, U.q2deck)}</div>
+    ${kpi('Energy revenue', mm(F.energy[5]), `Q3 2026 · ${pct((F.energy[5] / F.energy[1] - 1) * 100)} YoY · tariff-related refunds`, U.q3deck)}
+    ${kpi('Energy gross margin (calc.)', em[5] + '%', `Q3 2026 · ${em[4]}% in Q2 · tariff refunds and vendor warranty true-down`, U.q3call)}</div>
   <div class="grid g2" style="margin-bottom:16px">${ccard('enDep', 'Storage deployed (GWh)', 'per quarter')}${ccard('enRev', 'Energy revenue (US$m) and gross margin (%)', 'margin calculated from the statement of operations')}</div>
-  ${tableBlock({title: 'Energy generation & storage', columns: ['US$m', ...D.fcols], rows: [['Revenue', ...F.energy], ['Cost of revenue', ...F.energy_cogs], ['Gross profit (calc.)', ...F.energy.map((v, k) => v == null ? null : v - F.energy_cogs[k])], ['Gross margin (calc.)', ...em.map(v => v == null ? null : v + '%')]]}, {id: 'tEn', notes: ['Source: Tesla Q2 2026 update, statement of operations ' + U.q2deck + ' . Q2 2026 includes “increase in energy warranty-related charges due to vendor cell issue”.', 'Capacity: Megapack 40 GWh (California), 20 GWh (Shanghai), Texas Megafactory commissioning (Megapack 3 / Megablock in 2026); Powerwall >6 GWh (Nevada).']})}`;
+  ${tableBlock({title: 'Energy generation & storage', columns: ['US$m', ...D.fcols], rows: [['Revenue', ...F.energy], ['Cost of revenue', ...F.energy_cogs], ['Gross profit (calc.)', ...F.energy.map((v, k) => v == null ? null : v - F.energy_cogs[k])], ['Gross margin (calc.)', ...em.map(v => v == null ? null : v + '%')]]}, {id: 'tEn', notes: ['Source: Tesla Q3 2026 update, statement of operations ' + U.q3deck + ' . Q2 2026 included “increase in energy warranty-related charges due to vendor cell issue”; Q3 2026 margin was lifted by tariff refunds and a warranty true-down agreed with the cell vendor (CFO, Q3 call ' + U.q3call + ' ).', 'Capacity: Megapack 40 GWh (California), 20 GWh (Shanghai), 50 GWh Megafactory Texas (production began Q3 2026); Powerwall >6 GWh (Nevada).']})}`;
   chart('enDep', {type: 'bar', data: {labels: D.Q.map(qs), datasets: [{label: 'Storage deployed (GWh)', data: O.storage, backgroundColor: C.acc}]}, options: {plugins: {legend: {display: false}}}});
   chart('enRev', {data: {labels: D.fcols.map(qs), datasets: [{type: 'bar', label: 'Energy revenue (US$m)', data: F.energy, backgroundColor: C.g3, yAxisID: 'y'}, {type: 'line', label: 'Energy gross margin %', data: em, borderColor: C.acc, backgroundColor: C.acc, yAxisID: 'y1'}]}, options: {scales: {y1: {position: 'right', grid: {display: false}, ticks: {callback: v => v + '%'}}}}});
 }
@@ -356,10 +357,10 @@ function energyTab() {
 function robotaxiTab() {
   sec('robotaxi').innerHTML = `<h2>Cybercab & Robotaxi <span class="mut">production, cities, permits, deadlines</span></h2>
   <div class="grid g4" style="margin-bottom:16px">
-    ${kpi('Cybercab production', 'Started', 'Giga Texas · installed capacity >125,000/yr', U.q2deck)}
+    ${kpi('Cybercab production', 'Started', 'Giga Texas · installed capacity >125,000/yr', U.q3deck)}
     ${kpi('Cybercabs serving Austin', '300+', '10 Oct 2026 · 8x in 30 days (Tesla Robotaxi on X)', U.cab)}
     ${kpi('Robotaxi metros', '7', '6 ramping unsupervised + Bay Area with safety driver', U.q2deck)}
-    ${kpi('Cumulative unsupervised miles', '>1m', 'per Morgan Stanley (third-party), up from ~380k at Q2', U.tipranks)}</div>
+    ${kpi('Cumulative unsupervised miles', '~2m', 'end of Q3 2026 · up 8x in the quarter (Tesla)', U.q3deck)}</div>
   ${tableBlock({title: 'Robotaxi service by metro', columns: ['Metro', 'Launched', 'Status', 'Source'], rows: D.robotaxi}, {id: 'tRT', wrap: true, notes: ['Status per Tesla Q2 2026 update (“Ramping Unsupervised” / “Safety Driver”) plus later company posts. Fleet counts from community trackers are not used.']})}
   <div class="grid g2" style="margin:16px 0">
     <div class="card"><h3 style="margin-top:0">Cybercab facts</h3>${ul([`Public paid rides in Austin since <b>4 Sep 2026</b>, the day after the launch event. ${ext(U.cab)}`, `No steering wheel or pedals; 48 kWh battery, 219 hp motor (EPA filing). ${ext(U.cab)}`, `Engineering test drives on public roads and employee rides at Giga Texas began in Q2/July 2026. ${ext(U.q2deck)}`, `Next city: Dallas “soon” (Ashok Elluswamy, 10 Oct); no date. ${ext('https://x.com/aelluswamy/status/2108986941127696515')}`])}</div>
@@ -372,11 +373,11 @@ function fsdTab() {
   const S = D.safety;
   sec('fsd').innerHTML = `<h2>FSD (Supervised) <span class="mut">adoption, safety, approvals, investigations</span></h2>
   <div class="grid g4" style="margin-bottom:16px">
-    ${kpi('Active FSD subscriptions', '1.48m', 'Q2 2026 · +56% YoY · incl. upfront purchases, excl. trials', U.q2deck)}
-    ${kpi('North America attach rate', '>55%', 'of new deliveries include FSD (Q2 2026)', U.q2deck)}
+    ${kpi('Active FSD subscriptions', '1.74m', 'Q3 2026 · +67% YoY · incl. upfront purchases, excl. trials', U.q3deck)}
+    ${kpi('North America attach rate', '>75%', 'of new deliveries signed up for paid FSD (Q3 2026; >55% in Q2)', U.q3deck)}
     ${kpi('Miles per major collision (FSD)', fmt(S.rows[0][1]), `vs ${fmt(S.rows[3][1])} U.S. average (Tesla estimate)`, S.src)}
     ${kpi('US price', 'US$99/mo', 'subscription only since 14 Feb 2026', 'https://www.tesla.com/support/fsd-subscriptions')}</div>
-  <div class="grid g2" style="margin-bottom:16px">${ccard('fsdSub', 'Active FSD subscriptions (m)', 'Tesla quarterly updates · Q3 pending')}${ccard('fsdSafe', 'Miles per major collision (Tesla Vehicle Safety Report)', S.period)}</div>
+  <div class="grid g2" style="margin-bottom:16px">${ccard('fsdSub', 'Active FSD subscriptions (m)', 'Tesla quarterly updates')}${ccard('fsdSafe', 'Miles per major collision (Tesla Vehicle Safety Report)', S.period)}</div>
   ${tableBlock({title: 'Tesla Vehicle Safety Report', columns: ['Group', 'Miles per major collision', 'Major collisions', 'Miles logged'], rows: S.rows}, {id: 'tSafe', notes: ['Source: Tesla, FSD (Supervised) Vehicle Safety Report ' + S.src + ' (figures as tabulated by Learn My EV ' + S.src2 + ' ). “Major” = airbag or other non-reversible restraint deployed; a crash counts as FSD if it was active within 5 s before impact. Tesla does not attribute fault.', 'Caveat: the like-for-like comparison is FSD vs the same fleet driven manually with active safety (≈2.7x), not vs the U.S. average (≈8x), which is an older fleet.']})}
   ${tableBlock({title: 'Approvals by market', columns: ['Market', 'Status', 'Detail', 'Source'], rows: D.fsd_mkts}, {id: 'tMk', wrap: true, notes: ['EU-wide approval needs a qualified majority: 15 of 27 member states representing 65% of the EU population.']})}
   <div class="grid g2" style="margin:16px 0"><div>${tableBlock({title: 'Software versions', columns: ['Version', 'Where', 'Source'], rows: D.fsd_ver}, {id: 'tVer', wrap: true})}</div>
@@ -390,9 +391,9 @@ function fsdTab() {
 function optimusTab() {
   sec('optimus').innerHTML = `<h2>Optimus <span class="mut">humanoid robot</span></h2>
   <div class="grid g4" style="margin-bottom:16px">
-    ${kpi('Production line', 'Fremont', 'former Model S/X space · lines being installed', U.q2deck)}
+    ${kpi('Production line', 'Fremont', 'early production on the high-volume line (Q3 2026)', U.q3deck)}
     ${kpi('Gen 3 design', 'Finalized', 'per Tesla to JPMorgan (Aug 2026); public reveal pending', U.electrekOpt)}
-    ${kpi('External sales', '2H 2027', '“as early as” · no price or customer disclosed', U.electrekOpt)}
+    ${kpi('External sales', 'End-2027', 'Musk on the Q3 call · no price or customer disclosed', U.q3call)}
     ${kpi('Long-term capacity goal', '1m + 10m', 'per year · Fremont + Texas', U.electrekOpt)}</div>
   ${tableBlock({title: 'Optimus timeline', columns: ['Date', 'What happened', 'Source'], rows: D.optimus}, {id: 'tOpt', wrap: true})}
   ${promiseCard(['Optimus'])}`;
@@ -426,10 +427,10 @@ function finTab() {
   const C3 = D.consensus;
   sec('fin').innerHTML = `<h2>Financials <span class="mut">segments and cash flow · US$m</span></h2>
   <div class="grid g4" style="margin-bottom:16px">
-    ${kpi('Q2 2026 revenue', mm(F.rev[4]), '+26% YoY', U.q2deck)}${kpi('Q2 2026 operating margin', F.opm[4] + '%', `vs ${F.opm[0]}% a year earlier`, U.q2deck)}${kpi('Q2 2026 capex', mm(-F.capex[4]), '+142% YoY (AI, Cybercab, Optimus, fab)', U.q2deck)}${kpi('Q2 2026 free cash flow', mm(F.fcf[4]), `cash ${bn(F.cash[4])}`, U.q2deck)}</div>
+    ${kpi('Q3 2026 revenue', mm(F.rev[5]), `${pct((F.rev[5] / F.rev[1] - 1) * 100)} YoY · Tesla consensus US$28,341m`, U.q3deck)}${kpi('Q3 2026 operating margin', F.opm[5] + '%', `vs ${F.opm[1]}% a year earlier · consensus 2.5%`, U.q3deck)}${kpi('Q3 2026 capex', mm(-F.capex[5]), `${pct((F.capex[5] / F.capex[1] - 1) * 100)} YoY · 2026 guide ~US$20bn`, U.q3call)}${kpi('Q3 2026 free cash flow', mm(F.fcf[5]), `cash ${bn(F.cash[5])}`, U.q3deck)}</div>
   <div class="grid g2" style="margin-bottom:16px">${ccard('fiCf', 'Operating cash flow, capex and free cash flow (US$m)', 'per quarter')}${ccard('fiMg', 'Margins (%)', 'gross, auto ex-credits, operating')}</div>
-  ${tableBlock({title: 'Income statement, cash flow and balance sheet', columns: ['US$m', ...D.fcols], rows}, {id: 'tFin', csvname: 'TSLA financials', colorLatest: true, noLatest: true, notes: ['Source: Tesla Q2 2026 update (financial summary, statement of operations, balance sheet) ' + U.q2deck + ' ; also filed as 8-K exhibit 99.1 ' + U.q2_8k, 'Q3 2026 is reported after the US close on 21 Oct 2026; shown as pending in this build.']})}
-  ${tableBlock({title: `Q3 2026 and FY2026 consensus (company-compiled, ${C3.n} analysts, ${C3.asof})`, columns: ['Line', 'Q3 2026 average', 'FY2026 average'], rows: C3.rows}, {id: 'tCons', notes: ['Source: Tesla IR “Q3 2026 Earnings Consensus” ' + C3.src + ' . Tesla does not endorse these estimates.']})}`;
+  ${tableBlock({title: 'Income statement, cash flow and balance sheet', columns: ['US$m', ...D.fcols], rows}, {id: 'tFin', csvname: 'TSLA financials', colorLatest: true, noLatest: true, notes: ['Source: Tesla Q3 2026 update (financial summary, statement of operations, balance sheet, cash flows; Q3 2025–Q3 2026) ' + U.q3deck + ' ; also filed as 8-K exhibit 99.1 ' + U.q3_8k + ' . Q2 2025 from the Q2 2026 update ' + U.q2deck, 'The Q3 2026 10-Q had not been filed when this build was made; figures are from the unaudited update deck.']})}
+  ${tableBlock({title: `Q3 2026 and FY2026 consensus (company-compiled, ${C3.n} analysts, ${C3.asof})`, columns: ['Line', 'Q3 2026 average', 'Q3 2026 actual', 'FY2026 average'], rows: C3.rows.map((r, k) => [r[0], r[1], D.actual.q3[k], r[2]])}, {id: 'tCons', notes: ['Source: Tesla IR “Q3 2026 Earnings Consensus” ' + C3.src + ' . Tesla does not endorse these estimates. Actuals: Q3 2026 update ' + U.q3deck + ' . Street (third-party) consensus per Investing.com: non-GAAP EPS US$0.45, revenue US$27.92bn ' + D.actual.street_src]})}`;
   chart('fiCf', {type: 'bar', data: {labels: D.fcols.map(qs), datasets: [{label: 'Operating cash flow', data: F.ocf, backgroundColor: C.g3}, {label: 'Capex', data: F.capex, backgroundColor: C.g2}, {label: 'Free cash flow', data: F.fcf, backgroundColor: C.acc}]}, options: {plugins: {tooltip: {callbacks: {label: c => `${c.dataset.label}: ${mm(c.raw)}`}}}}});
   chart('fiMg', {type: 'line', data: {labels: D.fcols.map(qs), datasets: [{label: 'Total gross margin', data: F.tgm, borderColor: C.g2, backgroundColor: C.g2}, {label: 'Auto GM ex-credits', data: F.agm_x, borderColor: C.acc, backgroundColor: C.acc}, {label: 'Operating margin', data: F.opm, borderColor: C.g, backgroundColor: C.g}]}, options: {scales: {y: {ticks: {callback: v => v + '%'}}}}});
 }
