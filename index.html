@@ -1,0 +1,132 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tesla (TSLA) Dashboard · © 2026 Hugo Tian</title><meta name="author" content="Hugo Tian">
+<link rel="icon" type="image/png" href="favicon.png?v=1792559680"><link rel="apple-touch-icon" href="icon-180.png">
+<script>(function(){var h=document.documentElement,l=null;try{l=localStorage.getItem('tsla-lang')}catch(e){}if(l!=='en'&&l!=='zh')l=/^zh/i.test(navigator.language||'')?'zh':'en';if(/[?&]lang=zh/.test(location.search))l='zh';h.dataset.lang=l})();</script>
+<script src="vendor/chart.umd.min.js"></script><script src="data.js?v=1792559680"></script>
+<style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,"PingFang SC","Noto Sans CJK SC",sans-serif;--bg:#f5f5f7;--panel:#fff;--line:rgba(0,0,0,.06);--txt:#1d1d1f;--mut:#6e6e73;--acc:#cc0000;--accsoft:rgba(204,0,0,.08);--pos:#1d8a3a;--neg:#d70015;--warn:#b25000;--shadow:0 1px 1px rgba(0,0,0,.02),0 2px 12px rgba(0,0,0,.035);--glass:rgba(251,251,253,.85)}
+*{box-sizing:border-box}body{margin:0;font-family:var(--font);background:var(--bg);color:var(--txt);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:#00467a;text-decoration:none}a:hover{text-decoration:underline}
+html[data-lang=en] .zh,html[data-lang=zh] .en{display:none}
+header{position:sticky;top:0;z-index:30;background:var(--glass);backdrop-filter:saturate(180%) blur(20px);box-shadow:0 1px 0 var(--line)}
+.bar{max-width:1200px;margin:0 auto;padding:0 32px;height:52px;display:flex;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--txt);font-weight:600}.brand img{width:28px;height:28px}
+nav{display:flex;flex:1;overflow-x:auto;justify-content:center}nav a{padding:6px 9px;border-radius:980px;color:var(--txt);opacity:.72;font-size:12px;white-space:nowrap}
+nav a.on{color:var(--acc);opacity:1;font-weight:600;background:var(--accsoft)}
+.lang{border:0;background:none;cursor:pointer;display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mut)}.lang img{width:16px;height:16px;border-radius:50%}
+main{max-width:1200px;margin:0 auto;padding:28px 32px 60px}section{display:none}section.on{display:block}
+h1{font-size:32px;margin:0 0 4px;letter-spacing:-.02em}h2{font-size:20px;margin:28px 0 12px}.sub{color:var(--mut);margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{background:var(--panel);border-radius:18px;padding:18px 20px;box-shadow:var(--shadow)}
+.k{font-size:12px;color:var(--mut)}.v{font-size:26px;font-weight:600;letter-spacing:-.02em}.n{font-size:12px;color:var(--mut)}
+.wide{grid-column:1/-1}.chart{position:relative;height:300px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--mut);font-weight:500}td.r,th.r{text-align:right}
+.tag{display:inline-block;padding:1px 8px;border-radius:980px;font-size:11px;font-weight:600}.met{background:#e3f4e8;color:var(--pos)}.behind{background:#fff1e0;color:var(--warn)}.missed{background:#fde8ea;color:var(--neg)}.pending{background:#eee;color:var(--mut)}
+.wc li{margin:6px 0}.pend{color:var(--mut);font-style:italic}.q{border-left:3px solid var(--acc);padding-left:12px}
+.merge{border:1px solid var(--acc)}footer{color:var(--mut);font-size:12px;text-align:center;padding:20px}
+</style></head><body>
+<header><div class="bar"><a class="brand" href="#overview"><img src="seal.png" alt=""><span>Tesla</span></a><nav id="nav"></nav>
+<button class="lang" onclick="setLang()"><img src="flag-us.svg"><span class="en">EN</span><span class="zh">中文</span><img src="flag-cn.svg"></button></div></header>
+<main id="main"></main>
+<footer><span class="en">Preview build · data as of 21 Oct 2026 (SGT), before Tesla's Q3-26 results (due 21 Oct after US close). Not investment advice.</span><span class="zh">预览版 · 数据截至 2026年10月21日（新加坡时间），特斯拉 Q3-26 财报（美股收盘后发布）之前。非投资建议。</span> · © 2026 Hugo Tian</footer>
+<script>
+const T=(e,z)=>`<span class="en">${e}</span><span class="zh">${z}</span>`;
+const L=(u,t='source')=>u?` <a href="${u}" target="_blank" rel="noopener">${T(t==='source'?'source':t,t==='source'?'来源':t)}</a>`:'';
+const P=T('pending','待公布');const f=n=>n==null?`<span class="pend">${P}</span>`:typeof n==='number'?n.toLocaleString('en-US'):n;
+const card=(k,v,n)=>`<div class="card"><div class="k">${k}</div><div class="v">${v}</div><div class="n">${n||''}</div></div>`;
+function setLang(){const h=document.documentElement;h.dataset.lang=h.dataset.lang==='en'?'zh':'en';try{localStorage.setItem('tsla-lang',h.dataset.lang)}catch(e){}}
+const TABS=[['overview','Overview','概览'],['autos','Autos','汽车'],['energy','Energy','能源'],['cybercab','Cybercab','Cybercab'],['fsd','FSD','FSD'],['people','Key people','关键人物'],['optimus','Optimus','Optimus'],['financials','Financials','财务'],['ownership','Ownership','持股与做空']];
+const SEC={};
+SEC.overview=`<h1>Tesla, Inc. (NASDAQ: TSLA)</h1><p class="sub">${T('Autos, energy storage, FSD, Cybercab and Optimus in one place. Every number links to its source.','汽车、储能、FSD、Cybercab 与 Optimus 一站式追踪，每个数字均附来源链接。')}</p>
+<div class="grid">${card(T('Q3-26 deliveries','Q3-26 交付量'),'486,532',T('−2% YoY, +1% QoQ; beat ~461k consensus','同比 −2%，环比 +1%；超出约46.1万的预期')+L(S.cnbcq3))}
+${card(T('Q3-26 storage deployed','Q3-26 储能部署'),'13.7 GWh',T('2nd-best quarter ever (record 14.2 GWh in Q4-25)','历史第二高（纪录为 Q4-25 的 14.2 GWh）')+L(S.q3pdd))}
+${card(T('Active FSD subscriptions (Q2-26)','FSD 活跃订阅（Q2-26）'),'1.48m',T('incl. upfront purchases, excl. trials','含一次性购买，不含试用')+L(S.evwire))}
+${card(T('Cybercabs serving Austin','奥斯汀运营的 Cybercab'),'300+',T('Tesla Robotaxi account, 10 Oct 2026','Tesla Robotaxi 官方账号，2026-10-10')+L(S.cabDallas))}</div>
+<h2>${T('What changed this week','本周变化')}</h2><div class="card wc"><ul>
+<li>${T('<b>SpaceX–Tesla merger review:</b> on SpaceX\'s Q3 call (20 Oct 2026) Musk confirmed both boards formed special committees of independent directors to review a merger. No terms yet; it would need 50% of all Tesla shares to vote yes.','<b>SpaceX 与特斯拉合并评估：</b>在 SpaceX Q3 电话会（2026-10-20）上，马斯克确认双方董事会已成立由独立董事组成的特别委员会评估合并。尚无条款；需特斯拉全部股份的50%投赞成票。')}${L(S.merger)}</li>
+<li>${T('<b>Q3-26 results due today</b>, 21 Oct after US close (22 Oct ~5:30 AM SGT webcast). Financial figures for Q3 are pending until then.','<b>Q3-26 财报今日发布</b>，美股10月21日收盘后（新加坡时间10月22日约凌晨5:30电话会）。Q3 财务数据届时更新。')}${L(S.q3pdd)}</li>
+<li>${T('FSD (Supervised) approved in Slovakia, per Musk on 16 Oct.','据马斯克10月16日发帖，FSD（监督版）在斯洛伐克获批。')}${L('https://x.com/elonmusk/status/2111131436191199660')}</li>
+<li>${T('NHTSA gave Tesla until 30 Oct to explain under oath how it certified a car with no steering wheel or pedals (Cybercab).','NHTSA 要求特斯拉在10月30日前宣誓说明无方向盘和踏板车辆（Cybercab）的认证方式。')}${L(S.tnorth)}</li>
+<li>${T('Annual shareholder meeting set for 3 Dec 2026.','年度股东大会定于2026年12月3日。')}${L(S.tnorth)}</li></ul></div>
+<h2>${T('SpaceX–Tesla merger','SpaceX–特斯拉合并')}</h2><div class="card merge"><table>
+<tr><th>${T('Status','状态')}</th><td>${T('Special committees of independent directors formed at both companies to review a merger (confirmed 20 Oct 2026)','两家公司均已成立独立董事特别委员会评估合并（2026-10-20确认）')}</td></tr>
+<tr><th>${T('Terms / exchange ratio','条款 / 换股比例')}</th><td>${P}</td></tr>
+<tr><th>${T('Approval needed','所需批准')}</th><td>${T('Yes votes from 50% of all outstanding Tesla shares','特斯拉全部流通股50%投赞成票')}</td></tr>
+<tr><th>${T('Source','来源')}</th><td>${L(S.merger,'TechCrunch')}</td></tr></table></div>`;
+SEC.autos=`<h1>${T('Autos','汽车业务')}</h1><p class="sub">${T('Production and deliveries by quarter (Tesla P&D releases / quarterly decks).','季度产量与交付量（特斯拉产销公告 / 季度报告）。')}</p>
+<div class="card"><div class="chart"><canvas id="cAuto"></canvas></div></div>
+<h2>${T('Quarterly table','季度明细')}</h2><div class="card"><table><tr><th></th>${Q.map(q=>`<th class="r">${q}</th>`).join('')}</tr>
+<tr><td>${T('Production','产量')}</td>${D.prod.map(v=>`<td class="r">${f(v)}</td>`).join('')}</tr>
+<tr><td>${T('Deliveries','交付量')}</td>${D.deliv.map(v=>`<td class="r">${f(v)}</td>`).join('')}</tr></table>
+<p class="n">${T('Sources: Q1-25 to Q1-26','来源：Q1-25 至 Q1-26')}${L(S.q1deck)} · Q2-26${L(S.reutq2)} · Q3-26${L(S.q3pdd)} · ${T('Q2-26 production not yet captured in this build','Q2-26 产量本版本尚未收录')}</p></div>
+<h2>${T('Margins, credits and ASP','毛利率、监管积分与均价')}</h2><div class="grid">
+${card(T('Auto gross margin ex-credits (Q2-26)','剔除积分的汽车毛利率（Q2-26）'),'16.3%',T('GAAP 16.9%; consensus was ~18.0%','GAAP 16.9%；市场预期约18.0%')+L(S.reutq2))}
+${card(T('Regulatory credit revenue (Q2-26)','监管积分收入（Q2-26）'),'$146m',T('vs $439m in Q2-25 (≈ −2/3)','Q2-25 为4.39亿美元（约降三分之二）')+L(S.yahooq2))}
+${card(T('Avg revenue per vehicle (Q2-26)','单车平均收入（Q2-26）'),'$42,730',T('down from $45,345','此前为45,345美元')+L(S.reutq2))}
+${card(T('Q3-26 margin / credits / ASP','Q3-26 毛利率/积分/均价'),P,T('reported after US close 21 Oct','10月21日美股收盘后公布'))}</div>`;
+SEC.energy=`<h1>${T('Energy','能源业务')}</h1><p class="sub">${T('Megapack / Megablock / Powerwall storage deployed (GWh).','Megapack / Megablock / Powerwall 储能部署量（GWh）。')}</p>
+<div class="card"><div class="chart"><canvas id="cEn"></canvas></div><p class="n">${T('Sources','来源')}:${L(S.q1deck,'Q1-26 deck')} ·${L(S.cnbcq3,'CNBC (Q2/Q3-26)')}</p></div>
+<div class="grid" style="margin-top:16px">${card(T('2025 full-year deployments','2025 全年部署'),'46.7 GWh',L(S.q4pdd))}
+${card(T('Energy revenue (Q2-26)','能源收入（Q2-26）'),'$3,139m',T('+13% YoY','同比 +13%')+L(S.q2deck))}
+${card(T('Energy gross margin','能源毛利率'),P,T('Q2-26 hit by warranty charges from a vendor cell issue','Q2-26 受供应商电芯问题导致的保修费用拖累')+L(S.q2deck))}</div>`;
+SEC.cybercab=`<h1>Cybercab</h1><p class="sub">${T('Production, cities, permits and promises vs reality.','生产、城市、牌照与承诺兑现情况。')}</p>
+<div class="grid">${card(T('Production','生产'),T('Started','已投产'),T('Giga Texas; listed capacity >125k/yr','德州超级工厂；标称产能>12.5万辆/年')+L(S.cabDallas))}
+${card(T('Public paid rides','公开付费乘车'),'4 Sep 2026',T('Austin only','仅奥斯汀')+L(S.cabDallas))}
+${card(T('Cybercabs in Austin','奥斯汀 Cybercab 数量'),'300+',T('8× in 30 days (Tesla); tracker count 105','30天增长8倍（官方）；第三方追踪105辆')+L(S.cabDallas))}
+${card(T('Next city','下一城市'),'Dallas',T('"soon", no date','"即将"，无具体日期')+L('https://x.com/aelluswamy/status/2108986941127696515'))}</div>
+<h2>${T('Robotaxi service cities (Model Y driverless)','Robotaxi 服务城市（Model Y 无人驾驶）')}</h2><div class="card"><table><tr><th>${T('City','城市')}</th><th>${T('Launch','上线')}</th><th>${T('Notes','备注')}</th></tr>
+<tr><td>Austin, TX</td><td>2025-06</td><td>${T('Flagship; Cybercab + Model Y','旗舰市场；Cybercab + Model Y')}</td></tr>
+<tr><td>Dallas, TX</td><td>2026-04-18</td><td>${T('81 sq mi zone; 67 Model Ys (tracker, 10 Oct)','服务区81平方英里；67辆 Model Y（追踪站，10月10日）')}${L(S.cabDallas)}</td></tr>
+<tr><td>Houston, TX</td><td>2026-04-18</td><td>${T('32 vehicles (tracker)','32辆（追踪站）')}${L(S.cabDallas)}</td></tr>
+<tr><td>Miami, FL</td><td>2026-07-03</td><td>${L(S.batman)}</td></tr><tr><td>Orlando / Tampa, FL</td><td>2026-07-21</td><td>${L(S.batman)}</td></tr>
+<tr><td>California (Bay Area)</td><td>—</td><td>${T('Operates with safety driver under CPUC TCP permit TCP0046782-A; CPUC driverless deployment and DMV driverless permits: ','凭 CPUC TCP 许可 TCP0046782-A 有安全员运营；CPUC 无人驾驶部署及 DMV 无人驾驶许可：')}${P}${L(S.q2deck)}</td></tr></table></div>
+<h2>${T('Regulatory','监管')}</h2><div class="card">${T('NHTSA deadline 30 Oct 2026 for Tesla to explain, under oath, certification of a vehicle with no steering wheel or pedals.','NHTSA 要求特斯拉于2026年10月30日前宣誓说明无方向盘和踏板车辆的认证。')}${L(S.tnorth)}</div>
+<h2>${T('Promises vs reality','承诺与兑现')}</h2><div class="card"><table><tr><th>${T('Said','日期')}</th><th>${T('Promise','承诺')}</th><th>${T('Reality','实际')}</th><th>${T('Status','状态')}</th></tr>
+${PROMISES.map(p=>`<tr><td>${p.d}</td><td>${p.w}</td><td>${p.r}${L(p.src)}</td><td><span class="tag ${p.st}">${p.st}</span></td></tr>`).join('')}</table></div>`;
+SEC.fsd=`<h1>FSD (Supervised)</h1><div class="grid">
+${card(T('Active FSD subscriptions','FSD 活跃订阅'),'1.48m (Q2-26)',T('+? Q3-26 pending','Q3-26 待公布')+L(S.evwire))}
+${card(T('NA new-delivery take rate','北美新车搭载率'),'>55%',T('Q2-26','Q2-26')+L(S.evwire))}
+${card(T('Cumulative FSD miles','FSD 累计里程'),'~12.45bn',T('as of 18 Jul 2026','截至2026年7月18日')+L(S.lookup))}
+${card(T('US pricing','美国定价'),'$99/mo',T('subscription-only since 14 Feb 2026','自2026年2月14日起仅订阅')+L(S.lookup))}</div>
+<div class="card" style="margin-top:16px"><div class="chart"><canvas id="cFsd"></canvas></div><p class="n">${L(S.q1deck,'Q1-26 deck')} ·${L(S.evwire,'Q2-26')}</p></div>
+<h2>${T('Versions','版本')}</h2><div class="card"><table><tr><td>v14.3.x</td><td>${T('North America HW4 (v14.3.9 latest seen Sept)','北美 HW4（9月最新见 v14.3.9）')}${L(S.fsdtrk)}</td></tr><tr><td>v14 Lite</td><td>${T('HW3 cars in US / South Korea; reached older Intel Model S/X mid-Oct','美国/韩国 HW3 车型；10月中旬覆盖旧款 Intel Model S/X')}${L(S.tnorth)}</td></tr><tr><td>v14.2.2.x</td><td>${T('Europe (firmware 2026.17.5)','欧洲（固件 2026.17.5）')}${L(S.fsdtrk)}</td></tr><tr><td>v15</td><td>${T('Called a "step-change"; release date pending','被称为"质变"；发布日期待定')}${L(S.electrekOpt)}</td></tr></table></div>
+<h2>${T('Approvals by market','各市场审批')}</h2><div class="card"><table><tr><th>${T('Market','市场')}</th><th>${T('Status','状态')}</th></tr>
+<tr><td>US, Canada, Mexico, Puerto Rico, Australia, NZ, South Korea</td><td><span class="tag met">live</span>${L(S.lookup)}</td></tr>
+<tr><td>Netherlands (RDW, 10 Apr 2026), Lithuania, Denmark, Belgium, Estonia, Slovenia (8 Sep)</td><td><span class="tag met">live</span>${L(S.fsdtrk)}</td></tr>
+<tr><td>Slovakia</td><td><span class="tag met">approved 16 Oct</span>${L('https://x.com/elonmusk/status/2111131436191199660')}</td></tr>
+<tr><td>EU-wide vote (scheduled 6 Oct) · France (UTAC tests) · Germany, Italy</td><td><span class="tag pending">pending</span> ${T('outcome of 6 Oct vote not captured yet','10月6日投票结果尚未收录')}${L(S.fsdtrk)}</td></tr>
+<tr><td>China</td><td><span class="tag behind">pending</span> ${T('Q3-26 approval target missed; ¥64,000 buyout only','Q3-26 审批目标未达成；仅6.4万元买断')}${L(S.cnchina)}</td></tr></table></div>
+<h2>${T('Safety & investigations','安全与调查')}</h2><div class="card"><table>
+<tr><td>NHTSA EA26002</td><td>${T('Opened 18 Mar 2026: FSD collisions in reduced visibility; ~3.2m vehicles, 9 crashes, 1 fatality. Still open; no recall.','2026年3月18日立案：低能见度下的 FSD 碰撞；约320万辆车、9起事故、1人死亡。仍未结案；无召回。')}${L(S.nhtsa)}${L(S.nhtsa2,'status')}</td></tr>
+<tr><td>${T('Tesla Vehicle Safety Report','特斯拉车辆安全报告')}</td><td>${P} ${T('(miles per crash with FSD vs US average not captured in this build)','（本版本未收录 FSD 每次事故行驶里程）')}${L('https://www.tesla.com/VehicleSafetyReport','tesla.com')}</td></tr></table></div>`;
+SEC.people=`<h1>${T('Key people','关键人物')}</h1><p class="sub">${T('Dated quotes from verified X accounts and earnings calls.','来自认证 X 账号及财报电话会、附日期的原话。')}</p><div class="grid">
+${QUOTES.map(q=>`<div class="card"><div class="k"><b>${q.who}</b> · ${q.role} · ${q.d}</div><p class="q">${T(q.t,q.zh)}</p>${q.u?L(q.u,'link'):''}</div>`).join('')}</div>`;
+SEC.optimus=`<h1>Optimus</h1><div class="grid">
+${card(T('Gen 3 design','第三代设计'),T('Finalized','已定型'),T('per Tesla to JPMorgan, Aug 2026; public reveal still pending','据特斯拉对摩根大通表示（2026年8月）；公开发布仍待定')+L(S.electrekOpt))}
+${card(T('Production line','生产线'),'Fremont',T('in former Model S/X space','原 Model S/X 产线')+L(S.tnorth))}
+${card(T('External sales','对外销售'),'2H-2027',T('"as early as"','"最早"')+L(S.electrekOpt))}
+${card(T('Long-term capacity ambition','长期产能目标'),'1m / 10m',T('Fremont / Texas','弗里蒙特 / 德州')+L(S.electrekOpt))}
+${card(T('Price · customers','价格 · 客户'),P,T('none disclosed','均未披露')+L(S.tnorth))}</div>`;
+SEC.financials=`<h1>${T('Segment financials & cash flow','分部财务与现金流')}</h1><div class="card"><table><tr><th></th>${D.fin.cols.map(c=>`<th class="r">${c}</th>`).join('')}</tr>
+${D.fin.rows.map(r=>`<tr><td>${T(r[0],r[1])}</td>${r[2].map(v=>`<td class="r">${f(v)}</td>`).join('')}</tr>`).join('')}</table><p class="n">${T('Source: Tesla Q2-26 Update financial summary','来源：特斯拉 Q2-26 季度报告财务摘要')}${L(S.q2deck)} · ${T('Q2-26 capex more than doubled on AI / robotaxi build-out','Q2-26 资本开支因 AI/Robotaxi 投入翻倍以上')}${L(S.reutq2)}</p></div>
+<div class="card" style="margin-top:16px"><div class="chart"><canvas id="cFcf"></canvas></div></div>`;
+SEC.ownership=`<h1>${T('Ownership, insiders & short interest','持股、内部人与做空')}</h1>
+<div class="card"><div class="chart"><canvas id="cSi"></canvas></div><p class="n">${T('Short interest, millions of shares; latest 70.93m = 2.24% of float, 1.9 days to cover (30 Sep 2026)','做空股数（百万股）；最新7,093万股＝流通股2.24%，回补天数1.9（2026-09-30）')}${L(S.si)}</p></div>
+<h2>${T('Recent insider transactions','近期内部人交易')}</h2><div class="card"><table><tr><th>${T('Date','日期')}</th><th>${T('Insider','内部人')}</th><th>${T('Transaction','交易')}</th><th>${T('Type','类型')}</th></tr>
+<tr><td>2026-09-08</td><td>Vaibhav Taneja (CFO)</td><td>${T('Sold 2,605.75 sh @ $360.13','以360.13美元卖出2,605.75股')}${L(S.taneja)}</td><td>${T('Tax withholding on RSU vest (not discretionary)','RSU 归属预扣税（非主动）')}</td></tr>
+<tr><td>2026</td><td>Kimbal Musk, Robyn Denholm</td><td>${T('No 2026 Form 4 sales found (last Kimbal sale 9 Dec 2025)','未发现2026年 Form 4 卖出（Kimbal 上次卖出为2025年12月9日）')}${L('https://www.secform4.com/insider-trading/1318605.htm')}</td><td>—</td></tr></table></div>
+<h2>${T('Major holders','主要股东')}</h2><div class="card">${P} ${T('— 13F / proxy holdings table to be added.','— 13F/委托书持股表待添加。')}</div>`;
+const nav=document.getElementById('nav'),main=document.getElementById('main');
+nav.innerHTML=TABS.map(t=>`<a href="#${t[0]}" data-t="${t[0]}">${T(t[1],t[2])}</a>`).join('');
+main.innerHTML=TABS.map(t=>`<section id="s-${t[0]}">${SEC[t[0]]}</section>`).join('');
+Chart.defaults.devicePixelRatio=Math.max(2,window.devicePixelRatio||1);Chart.defaults.font.family=getComputedStyle(document.body).fontFamily;
+const RED='#cc0000',GR='#86868b',made={};
+const opt={animation:false,responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}};
+const CH={autos:()=>new Chart(cAuto,{type:'bar',data:{labels:Q,datasets:[{label:'Deliveries / 交付',data:D.deliv,backgroundColor:RED},{label:'Production / 产量',data:D.prod,backgroundColor:GR}]},options:opt}),
+energy:()=>new Chart(cEn,{type:'bar',data:{labels:Q,datasets:[{label:'Storage deployed (GWh) / 储能部署',data:D.storage,backgroundColor:RED}]},options:opt}),
+fsd:()=>new Chart(cFsd,{type:'line',data:{labels:Q,datasets:[{label:'Active FSD subscriptions (m) / FSD 订阅（百万）',data:D.fsdSubs,borderColor:RED,backgroundColor:RED,tension:.3}]},options:opt}),
+financials:()=>new Chart(cFcf,{type:'bar',data:{labels:D.fin.cols,datasets:[{label:'Operating cash flow ($m)',data:D.fin.rows[8][2],backgroundColor:GR},{label:'Capex ($m)',data:D.fin.rows[9][2],backgroundColor:'#ff9f9f'},{label:'Free cash flow ($m)',data:D.fin.rows[10][2],backgroundColor:RED}]},options:opt}),
+ownership:()=>new Chart(cSi,{type:'line',data:{labels:D.si.dates,datasets:[{label:'Short interest (m sh) / 做空股数',data:D.si.m,borderColor:RED,tension:.3}]},options:opt})};
+function show(){const t=(location.hash||'#overview').slice(1);document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==='s-'+t));nav.querySelectorAll('a').forEach(a=>a.classList.toggle('on',a.dataset.t===t));if(CH[t]&&!made[t]){made[t]=1;CH[t]()}scrollTo(0,0)}
+addEventListener('hashchange',show);show();
+</script></body></html>
