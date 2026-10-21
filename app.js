@@ -167,20 +167,39 @@ function renderQuote(q) {
   if (!reg && q.ext && m.kind === 'close') sub += ` · ${tl(q.ext.label, sessZh(q.ext.label))} ${usd(q.ext.price)} (${sgn(q.ext.pct)}%)`;
   if (reg && q.bid && q.ask) sub += ` · ${tl('Bid', '买价')} ${usd(q.bid)} / ${tl('Ask', '卖价')} ${usd(q.ask)}`;
   $('#lq-sub').textContent = sub;
-  const RH = q.source === 'Robinhood public quote';
-  const venue = m.kind === 'regular' ? (RH ? tl('Nasdaq last sale via Robinhood', 'Nasdaq 最新成交价（经 Robinhood）') : q.source) : ((q.ext && q.ext.venue) ? tl(`${q.ext.venue} via Robinhood 24-hour feed`, `${q.ext.venue}（经 Robinhood 24 小时行情）`) : (RH ? tl('Robinhood extended-hours feed', 'Robinhood 延长时段行情') : q.source));
-  const fresh = q.source === 'Nasdaq.com quote API' && !/real-time/i.test(q.source_note || '') ? tl('may be delayed', '可能有延迟') : tl('real-time', '实时');
-  $('#lq-cap').textContent = (m.time ? tl(`as of ${tET(m.time)} ET (${tSG(m.time)} SGT)`, `截至美东时间 ${tET(m.time)}（新加坡时间 ${tSG(m.time)}）`) : '') + ` · ${venue} · ${fresh}` + (q.stale ? tl(' · last good update, retrying', ' · 最近一次有效更新，正在重试') : tl(' · refreshes every 15 s', ' · 每 15 秒刷新'));
+  const RH = q.source === 'Robinhood public quote', CN = q.source === 'CNBC quote feed';
+  const venue = CN ? tl('CNBC quote feed (Nasdaq last sale)', 'CNBC 行情（Nasdaq 最新成交）') : m.kind === 'regular' ? (RH ? tl('Nasdaq last sale via Robinhood', 'Nasdaq 最新成交价（经 Robinhood）') : q.source) : ((q.ext && q.ext.venue) ? tl(`${q.ext.venue} via Robinhood 24-hour feed`, `${q.ext.venue}（经 Robinhood 24 小时行情）`) : (RH ? tl('Robinhood extended-hours feed', 'Robinhood 延长时段行情') : q.source));
+  const fresh = CN ? (q.source_note === 'real-time' ? tl('real-time', '实时') : tl('may be delayed', '可能有延迟')) : q.source === 'Nasdaq.com quote API' && !/real-time/i.test(q.source_note || '') ? tl('may be delayed', '可能有延迟') : tl('real-time', '实时');
+  $('#lq-cap').textContent = (m.time ? tl(`as of ${tET(m.time)} ET (${tSG(m.time)} SGT)`, `截至美东时间 ${tET(m.time)}（新加坡时间 ${tSG(m.time)}）`) : (m.time_et ? tl(`last trade ${m.time_et}`, `最后成交 ${m.time_et}`) : '')) + ` · ${venue} · ${fresh}` + (q.stale ? tl(' · last good update, retrying', ' · 最近一次有效更新，正在重试') : tl(' · refreshes every 15 s', ' · 每 15 秒刷新'));
   /* vs-IPO box follows the live regular-session price */
   const rp = q.regular && q.regular.price; if (rp) { const v = $('#mc-v'); if (v) v.textContent = 'US$' + fmt(rp * D.price.shares_bn / 1000, 2) + 'tn'; const s1 = $('#mc-s'); if (s1) s1.textContent = tl(`${fmt(D.price.shares_bn, 2)}bn shares × ${usd(rp)} (${reg ? 'live' : 'last regular close'}, calc.)`, `${fmt(D.price.shares_bn * 10, 1)}亿股 × ${usd(rp)}（${reg ? '实时' : '最近常规收盘'}，计算值）`); }
 
+}
+/* primary: CNBC free quote feed fetched straight from the browser (same approach as the META dashboard), mapped to the Worker's quote shape; Worker then TradingView as fallbacks */
+const CNBC_URL = 'https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol?symbols=TSLA&requestMethod=itv&noform=1&partnerId=2&fund=1&exthrs=1&output=json&events=1';
+async function cnbcQuote() {
+  const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 7000);
+  const r = await fetch(CNBC_URL, {cache: 'no-store', signal: ctl.signal}); clearTimeout(to);
+  const c = ((await r.json()).FormattedQuoteResult || {}).FormattedQuote[0]; if (!c || !c.last) throw new Error('empty');
+  const n = v => v == null || v === '' ? null : parseFloat(String(v).replace(/[,%+]/g, ''));
+  const tm = v => { if (!v || !String(v).includes('T')) return null; const t = Date.parse(v); return isNaN(t) ? null : t; };
+  const et = new Date(new Date().toLocaleString('en-US', {timeZone: 'America/New_York'})), mins = et.getHours() * 60 + et.getMinutes(), wkday = et.getDay() > 0 && et.getDay() < 6;
+  const st = (c.curmktstatus === 'REG_MKT' && !(wkday && mins >= 570 && mins < 960)) ? 'CLOSED' : c.curmktstatus, reg = st === 'REG_MKT', x = c.ExtendedMktQuote, last = n(c.last), chg = n(c.change);
+  const lbl = {PRE_MKT: 'Pre-market', POST_MKT: 'After-hours', CLOSED: 'Closed'};
+  const q = {ok: true, source: 'CNBC quote feed', source_note: c.realTime === 'true' ? 'real-time' : 'may be delayed', session: reg ? 'regular' : st === 'PRE_MKT' ? 'pre' : st === 'POST_MKT' ? 'after' : 'closed', session_label: lbl[st] || st,
+    regular: {price: last}, prev_close: {price: +(last - chg).toFixed(2)}, ref_close: {price: last}, bid: n(c.bid), ask: n(c.ask), stale: false, cnbc_time: c.last_timedate};
+  if (reg || !x || !x.last) q.main = {kind: reg ? 'regular' : 'close', label: 'Close', price: last, change: chg, pct: n(c.change_pct), time: tm(c.last_time), time_et: c.last_timedate};
+  else { q.main = {kind: 'ext', label: lbl[x.type] || x.type, price: n(x.last), change: n(x.change), pct: n(x.change_pct), time: tm(x.last_time), time_et: x.last_timedate}; q.ext = {label: q.main.label, price: q.main.price, pct: q.main.pct}; }
+  return q;
 }
 async function pollQuote() {
   if (document.visibilityState === 'hidden') return;
   try {
     const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 8000);
-    const r = await fetch(QUOTE_API + (QUOTE_API.includes('?') ? '&' : '?') + 't=' + Date.now(), {cache: 'no-store', signal: ctl.signal}); clearTimeout(to);
-    const q = await r.json(); if (!q || !q.ok || !q.main) throw new Error('bad quote');
+    let q = null;
+    try { q = await cnbcQuote(); } catch (e1) { /* CNBC failed: fall back to the Worker */ }
+    if (!q) { const r = await fetch(QUOTE_API + (QUOTE_API.includes('?') ? '&' : '?') + 't=' + Date.now(), {cache: 'no-store', signal: ctl.signal}); q = await r.json(); }
+    clearTimeout(to); if (!q || !q.ok || !q.main) throw new Error('bad quote');
     LQ.fails = 0; LQ.ok = true; LQ.last = q; tvFallback(false); renderQuote(q); { const e = document.getElementById('lfstat'); if (e) e.textContent = tl(`Last tick $${Number((q.main || {}).price).toFixed(2)} at ${(q.main || {}).time_et || ''} · ${q.session_label || q.session || ''}`, `最新报价 $${Number((q.main || {}).price).toFixed(2)}，时间 ${(q.main || {}).time_et || ''} · ${q.session_label || q.session || ''}`); }
   } catch (e) {
     LQ.fails++;
