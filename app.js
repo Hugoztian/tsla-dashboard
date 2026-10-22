@@ -197,8 +197,8 @@ async function pollQuote() {
   try {
     const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 8000);
     let q = null;
-    try { q = await cnbcQuote(); } catch (e1) { /* CNBC failed: fall back to the Worker */ }
-    if (!q) { const r = await fetch(QUOTE_API + (QUOTE_API.includes('?') ? '&' : '?') + 't=' + Date.now(), {cache: 'no-store', signal: ctl.signal}); q = await r.json(); }
+    try { const r = await fetch(QUOTE_API + (QUOTE_API.includes('?') ? '&' : '?') + 't=' + Date.now(), {cache: 'no-store', signal: ctl.signal}); const j = await r.json(); if (j && j.ok && j.main) q = j; } catch (e1) { /* Worker failed: fall back to CNBC */ }
+    if (!q) { q = await cnbcQuote(); }
     clearTimeout(to); if (!q || !q.ok || !q.main) throw new Error('bad quote');
     LQ.fails = 0; LQ.ok = true; LQ.last = q; tvFallback(false); renderQuote(q); { const e = document.getElementById('lfstat'); if (e) e.textContent = tl(`Last tick $${Number((q.main || {}).price).toFixed(2)} at ${(q.main || {}).time_et || ''} · ${q.session_label || q.session || ''}`, `最新报价 $${Number((q.main || {}).price).toFixed(2)}，时间 ${(q.main || {}).time_et || ''} · ${q.session_label || q.session || ''}`); }
   } catch (e) {
