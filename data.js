@@ -13,6 +13,7 @@ const U = {
   nhtsa: 'https://static.nhtsa.gov/odi/inv/2026/INOA-EA26002-10023.pdf',
   award: 'https://www.sec.gov/Archives/edgar/data/1318605/000110465925108602/tm2530188d1_ex4-4.htm',
   award_vid: 'https://ir.tesla.com/_flysystem/s3/sec/000110465925094562/tm252289d25_defa14a-gen.pdf',
+  rtsafety: 'https://teslanorth.com/2026/10/21/tesla-robotaxi-safety-report-four-new-cities/',
   merger: 'https://techcrunch.com/2026/10/20/spacex-and-tesla-boards-form-special-committees-to-review-merger/',
   tcmv: 'https://www.channelnewsasia.com/business/eu-vote-teslas-supervised-self-driving-system-pushed-back-6411186',
   tcmv2: 'https://electrek.co/2026/09/25/eu-delays-tesla-fsd-vote-december-tcmv-agenda/',
@@ -82,6 +83,7 @@ return {
   consensus: {asof: '19 Oct 2026', n: 23, rows: [['Automotive revenue', 20272, 76454], ['Energy generation & storage revenue', 3720, 13736], ['Services & other revenue', 4349, 16970], ['Total revenue', 28341, 107130], ['Gross profit', 5061, 19673], ['Gross margin', '17.9%', '18.4%'], ['Operating expenses (GAAP)', -4340, -16829], ['Income from operations', 721, 2844], ['Operating margin', '2.5%', 'n/a']], src: U.cons},
   capacity: [['California (Fremont)', 'Model 3 / Model Y', '>550,000', 'Production'], ['Shanghai', 'Model 3 / Model Y', '>950,000', 'Production'], ['Berlin', 'Model Y', '>375,000', 'Production'], ['Texas', 'Model Y', '>375,000', 'Production'], ['Texas', 'Cybertruck', '>125,000', 'Production'], ['Texas', 'Cybercab', '>125,000', 'Production'], ['Nevada', 'Tesla Semi', '25,000', 'Production'], ['TBD', 'Roadster', 'n/a', 'Design development'], ['California', 'Megapack', '40 GWh', 'Production'], ['Nevada', 'Powerwall', '>6 GWh', 'Production'], ['Shanghai', 'Megapack', '20 GWh', 'Production'], ['Texas', 'Megapack (Megapack 3 / Megablock)', '50 GWh', 'Production'], ['California (Fremont)', 'Optimus', 'n/a', 'Early ramp'], ['Texas', 'Optimus', 'n/a', 'Construction']],
   week: [
+    ['21 Oct 2026', 'Robotaxi safety', 'Tesla published its first Robotaxi Safety Report: 3.11m miles with no safety monitor on board (22 Jan to 18 Oct 2026), with zero injuries, zero Robotaxi airbag deployments and no pedestrians or cyclists hit. It lists Las Vegas, Jacksonville, Phoenix and San Antonio as coming soon, without dates.', U.rtsafety],
     ['21 Oct 2026', 'Earnings', 'Q3 2026: revenue US$28.05bn (flat YoY), GAAP gross margin 19.6%, operating income US$718m (2.6% margin), non-GAAP EPS US$0.48 vs ~US$0.45 Street. Auto margin ex-credits rose to 18.1% from 16.3%; regulatory credits fell to US$113m.', U.q3deck],
     ['21 Oct 2026', 'Cash', 'Operating cash flow US$6.26bn, capex US$4.73bn, free cash flow +US$1.53bn (Q2: −US$1.09bn); cash and investments US$45.4bn. CFO cut 2026 capex guidance to about US$20bn and disclosed up to US$30bn of borrowing capacity.', U.q3call],
     ['21 Oct 2026', 'FSD', 'Active FSD subscriptions 1.74m (+67% YoY); over 75% of North American deliveries signed up for paid FSD at delivery, about 20 points above Q2.', U.q3deck],
@@ -119,6 +121,10 @@ return {
     ['Miami, FL', 'Jul 2026', 'Ramping unsupervised', U.q2deck],
     ['Orlando, FL', 'Jul 2026', 'Ramping unsupervised', U.q2deck],
     ['Tampa, FL', 'Jul 2026', 'Ramping unsupervised', U.q2deck],
+    ['Las Vegas, NV', 'TBA', 'Listed as “coming soon” on Tesla’s Robotaxi Safety Report (21 Oct 2026); no launch date', U.rtsafety],
+    ['Jacksonville, FL', 'TBA', 'Listed as “coming soon” on Tesla’s Robotaxi Safety Report (21 Oct 2026); no launch date', U.rtsafety],
+    ['Phoenix, AZ', 'TBA', 'Listed as “coming soon” on Tesla’s Robotaxi Safety Report (21 Oct 2026); no launch date', U.rtsafety],
+    ['San Antonio, TX', 'TBA', 'Listed as “coming soon” on Tesla’s Robotaxi Safety Report (21 Oct 2026); no launch date', U.rtsafety],
     ['SF Bay Area, CA', '2025', 'Safety driver, under CPUC TCP permit TCP0046782-A; no CPUC driverless deployment or DMV driverless permit disclosed', U.q2deck]],
   safety: {period: 'rolling 12 months, North America (latest Tesla update)', rows: [['FSD (Supervised) engaged', 5690675, 1255, 7141797525], ['Manual, with active safety', 2076014, 17380, 36081121994], ['Manual, no active safety (pre-2014 Teslas)', 859465, 239, 205412073], ['U.S. average (Tesla estimate)', 698781, 4646404, 3246817000000]], src: U.safety, src2: U.safety2},
   fsd_mkts: [
