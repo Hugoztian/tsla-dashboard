@@ -254,7 +254,7 @@ function weekCard() {
   const src = (lab, u) => `${esc(lab)} <span style="font-size:12px">${ext(u)}</span>`;
   const li = D.week.map(r => `<li><span class="mut" style="font-size:12px">${esc(r[0])} · ${esc(r[1])}</span><br>${src(r[2], r[3])}</li>`).join('');
   const nx = D.next.map(r => `<li><b>${esc(r[0])}</b> · ${esc(r[1])}</li>`).join('');
-  return card('wk', 'What changed this week', '22 Oct 2026 · last 7 days · newest first', `<div class="grid g2"><div><ul class="lst">${li}</ul></div><div><h3 style="margin-top:0">Coming up</h3><ul class="lst">${nx}</ul></div></div>`);
+  return card('wk', 'What changed this week', '23 Oct 2026 · last 7 days · newest first', `<div class="grid g2"><div><ul class="lst">${li}</ul></div><div><h3 style="margin-top:0">Coming up</h3><ul class="lst">${nx}</ul></div></div>`);
 }
 function promiseCard(filter) {
   const rows = D.promises.filter(r => !filter || filter.includes(r[2]));
@@ -444,7 +444,7 @@ function valTab() {
     ${kpi('Average price target', 'US$' + S.tip.avg, `TipRanks · ${S.tip.buy} buy / ${S.tip.hold} hold / ${S.tip.sell} sell`, S.tip.src)}${kpi('Options-implied move', '±' + S.implied_move + '%', 'around Q3 results (TipRanks)', S.tip.src)}</div>
   <div class="grid g2" style="margin-bottom:16px">${ccard('vaEv', 'EV / sales vs peers (x)', 'LTM · StockAnalysis (S&P Global MI)')}${ccard('vaPe', 'Forward P/E vs peers (x)', 'n/a for loss-making Rivian')}</div>
   ${tableBlock({title: 'Peer multiples', columns: ['Company', 'Market cap', 'P/E (ttm)', 'P/E (fwd)', 'EV/sales', 'EV/EBITDA', 'Gross margin %', 'Price', 'Source'], rows: D.peers}, {id: 'tPeer', notes: ['Source: StockAnalysis.com statistics pages (data from S&P Global Market Intelligence), checked 21 Oct 2026 (SGT). Third-party; BYD in HKD.']})}
-  ${tableBlock({title: 'Recent analyst actions', columns: ['Date', 'Firm', 'Rating', 'Target'], rows: S.actions}, {id: 'tAn', notes: [`Third-party compilations: TeslaNewsWire ${S.src} and TipRanks ${S.tip.src} . Range of targets in MarketBeat data: US$${S.lo} (GLJ Research) to US$${S.hi} (Morgan Stanley, rating unconfirmed). StockAnalysis: average US$${D.street.sa.avg} from ${D.street.sa.n} analysts.`]})}`;
+  ${tableBlock({title: 'Recent analyst actions', columns: ['Date', 'Firm', 'Rating', 'Target', 'Source'], rows: S.actions}, {id: 'tAn', notes: [`Third-party compilations: TeslaNewsWire ${S.src} and TipRanks ${S.tip.src} . Range of targets in MarketBeat data: US$${S.lo} (GLJ Research) to US$${S.hi} (Morgan Stanley, rating unconfirmed). StockAnalysis: average US$${D.street.sa.avg} from ${D.street.sa.n} analysts.`]})}`;
   const pr = D.peers;
   chart('vaEv', {type: 'bar', data: {labels: pr.map(r => r[0]), datasets: [{label: 'EV / sales', data: pr.map(r => r[4]), backgroundColor: pr.map((r, k) => k ? C.g3 : C.acc)}]}, options: {indexAxis: 'y', plugins: {legend: {display: false}}, scales: {x: {type: 'logarithmic'}}}});
   chart('vaPe', {type: 'bar', data: {labels: pr.map(r => r[0]), datasets: [{label: 'Forward P/E', data: pr.map(r => r[3]), backgroundColor: pr.map((r, k) => k ? C.g3 : C.acc)}]}, options: {indexAxis: 'y', plugins: {legend: {display: false}}, scales: {x: {type: 'logarithmic'}}}});
