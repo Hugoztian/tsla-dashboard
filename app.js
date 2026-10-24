@@ -1,3 +1,7 @@
+/* English only */
+const LANG = 'en';
+const tl = en => en;
+const I18N = {apply() {}, s: x => x, zhTok: x => x, tvLocale: () => 'en'};
 /* Tesla (TSLA) Dashboard · © 2026 Hugo Tian. All rights reserved. Data from data.js (build_data.py), x_feed.js (build_x.py). */
 'use strict';
 const D = window.TSLA_DATA;
@@ -67,7 +71,7 @@ function wireTables(root) {
     if (tb.dataset.wired) return; tb.dataset.wired = 1;
     const body = tb.tBodies[0]; const orig = [...body.rows];
     const n = document.getElementById(tb.id + '-n'); const total = orig.filter(r => !r.classList.contains('sec') && !r.classList.contains('xdetail')).length;
-    const count = () => { if (n) { const vis = orig.filter(r => !r.classList.contains('sec') && !r.classList.contains('xdetail') && !r.hidden).length; n.textContent = vis === total ? tl(`${total} rows`, `共 ${total} 行`) : tl(`${vis} of ${total} rows`, `显示 ${vis} / 共 ${total} 行`); } };
+    const count = () => { if (n) { const vis = orig.filter(r => !r.classList.contains('sec') && !r.classList.contains('xdetail') && !r.hidden).length; n.textContent = vis === total ? tl(`${total} rows`) : tl(`${vis} of ${total} rows`); } };
     count();
     // expandable rows
     orig.filter(r => r.classList.contains('xrow')).forEach(r => r.addEventListener('click', e => { if (e.target.closest('a,[data-tip]')) return; const d = body.querySelector(`tr.xdetail[data-for="${r.dataset.ri}"]`); if (!d) return; d.hidden = !d.hidden; r.classList.toggle('open', !d.hidden); }));
@@ -97,7 +101,7 @@ function filterTable(id, q) {
     const hit = !q || r.innerText.toLowerCase().includes(q); r.hidden = !hit; if (hit) secHit = true; if (!hit) r.classList.remove('open');
   });
   if (sec) sec.hidden = !secHit && !!q;
-  const n = document.getElementById(id + '-n'); if (n) { const d = rows.filter(r => !r.classList.contains('sec') && !r.classList.contains('xdetail')); const v = d.filter(r => !r.hidden).length; n.textContent = v === d.length ? tl(`${d.length} rows`, `共 ${d.length} 行`) : tl(`${v} of ${d.length} rows`, `显示 ${v} / 共 ${d.length} 行`); }
+  const n = document.getElementById(id + '-n'); if (n) { const d = rows.filter(r => !r.classList.contains('sec') && !r.classList.contains('xdetail')); const v = d.filter(r => !r.hidden).length; n.textContent = v === d.length ? tl(`${d.length} rows`) : tl(`${v} of ${d.length} rows`); }
 }
 function csv(id) {
   const tb = document.getElementById(id); if (!tb) return;
@@ -146,33 +150,33 @@ function tvFallback(on) {
   w.style.display = on ? 'flex' : 'none'; lq.style.display = on ? 'none' : 'block';
   if (on && !LQ.tv) { LQ.tv = true; const el = $('#tvq'); const P = D.price;
     tvEmbed(el, 'single-quote', {symbol: TV_SYM, width: '100%', isTransparent: true, colorTheme: tvTheme(), locale: I18N.tvLocale()}, why => {
-      el.style.height = 'auto'; el.innerHTML = `<div class="tvfail" title="${esc(why)}">${tl('Live quote unavailable', '实时报价不可用')}</div><div class="snap"><span class="snapv">$${fmt(P.close, 2)}</span><span class="snaps">${tl('Build-time snapshot · close', '构建时快照 · 收盘')} ${esc(tl(dlong(P.close_date), I18N.zhTok(dlong(P.close_date))))} · ${tl('not live', '非实时')}</span></div>`;
-      const c = $('#tvqcap'); if (c) c.textContent = tl('Static snapshot (not live)', '静态快照（非实时）'); }); }
+      el.style.height = 'auto'; el.innerHTML = `<div class="tvfail" title="${esc(why)}">${tl('Live quote unavailable')}</div><div class="snap"><span class="snapv">$${fmt(P.close, 2)}</span><span class="snaps">${tl('Build-time snapshot · close')} ${esc(tl(dlong(P.close_date)))} · ${tl('not live')}</span></div>`;
+      const c = $('#tvqcap'); if (c) c.textContent = tl('Static snapshot (not live)'); }); }
 }
 function renderQuote(q) {
   const m = q.main || {}, ref = q.ref_close || {}, reg = q.session === 'regular';
   const box = $('#lq'); if (!box) return; box.classList.toggle('reg', reg); box.classList.toggle('stale', !!q.stale);
-  const SESS = {premarket: '盘前', pre: '盘前', 'pre-market': '盘前', afterhours: '盘后', after: '盘后', 'after-hours': '盘后', post: '盘后', overnight: '夜盘', closed: '休市'};
+  const SESS = {};
   const sessZh = x => SESS[String(x || '').toLowerCase()] || SESS[String(q.session || '').toLowerCase()] || String(x || '');
-  $('#lq-sl').textContent = reg ? tl('Live · regular session', '实时 · 常规交易时段') : (q.session === 'closed' ? tl('Market closed', '休市') : tl(`${q.session_label || q.session} session`, `${sessZh(q.session_label || q.session)}时段`)) + (q.session === 'overnight' ? tl(' (8 PM–4 AM ET)', '（美东 20–4 时）') : '');
-  $('#lq-k').textContent = m.kind === 'regular' ? '' : tl(m.label || '', m.kind === 'close' ? '收盘价' : sessZh(m.label || m.kind));
+  $('#lq-sl').textContent = reg ? tl('Live · regular session') : (q.session === 'closed' ? tl('Market closed') : tl(`${q.session_label || q.session} session`)) + (q.session === 'overnight' ? tl(' (8 PM–4 AM ET)') : '');
+  $('#lq-k').textContent = m.kind === 'regular' ? '' : tl(m.label || '');
   const px = $('#lq-px'); px.textContent = m.price != null ? usd(m.price) : 'n/a';
   if (LQ.prev != null && m.price != null && m.price !== LQ.prev) { px.classList.remove('up', 'dn'); void px.offsetWidth; px.classList.add(m.price > LQ.prev ? 'up' : 'dn'); }
   LQ.prev = m.price;
   const ch = $('#lq-ch');
-  if (m.change != null) { ch.className = 'lq-ch ' + (m.change >= 0 ? 'pos' : 'neg'); ch.textContent = `${sgn(m.change)} (${sgn(m.pct)}%)${reg ? '' : tl(' vs close', ' 较收盘')}`; }
+  if (m.change != null) { ch.className = 'lq-ch ' + (m.change >= 0 ? 'pos' : 'neg'); ch.textContent = `${sgn(m.change)} (${sgn(m.pct)}%)${reg ? '' : tl(' vs close')}`; }
   else { ch.className = 'lq-ch mut'; ch.textContent = ''; }
   const pc = (reg ? q.prev_close : ref) || {};
-  let sub = `${tl('Prev close', '前收盘')} ${usd(pc.price)}${pc.date ? ` · ${tl(mdy(pc.date), I18N.zhTok(mdy(pc.date)))}` : ''}`;
-  if (!reg && q.ext && m.kind === 'close') sub += ` · ${tl(q.ext.label, sessZh(q.ext.label))} ${usd(q.ext.price)} (${sgn(q.ext.pct)}%)`;
-  if (reg && q.bid && q.ask) sub += ` · ${tl('Bid', '买价')} ${usd(q.bid)} / ${tl('Ask', '卖价')} ${usd(q.ask)}`;
+  let sub = `${tl('Prev close')} ${usd(pc.price)}${pc.date ? ` · ${tl(mdy(pc.date))}` : ''}`;
+  if (!reg && q.ext && m.kind === 'close') sub += ` · ${tl(q.ext.label)} ${usd(q.ext.price)} (${sgn(q.ext.pct)}%)`;
+  if (reg && q.bid && q.ask) sub += ` · ${tl('Bid')} ${usd(q.bid)} / ${tl('Ask')} ${usd(q.ask)}`;
   $('#lq-sub').textContent = sub;
   const RH = q.source === 'Robinhood public quote', CN = q.source === 'CNBC quote feed';
-  const venue = CN ? tl('CNBC quote feed (Nasdaq last sale)', 'CNBC 行情（Nasdaq 最新成交）') : m.kind === 'regular' ? (RH ? tl('Nasdaq last sale via Robinhood', 'Nasdaq 最新成交价（经 Robinhood）') : q.source) : ((q.ext && q.ext.venue) ? tl(`${q.ext.venue} via Robinhood 24-hour feed`, `${q.ext.venue}（经 Robinhood 24 小时行情）`) : (RH ? tl('Robinhood extended-hours feed', 'Robinhood 延长时段行情') : q.source));
-  const fresh = CN ? (q.source_note === 'real-time' ? tl('real-time', '实时') : tl('may be delayed', '可能有延迟')) : q.source === 'Nasdaq.com quote API' && !/real-time/i.test(q.source_note || '') ? tl('may be delayed', '可能有延迟') : tl('real-time', '实时');
-  $('#lq-cap').textContent = (m.time ? tl(`as of ${tET(m.time)} ET (${tSG(m.time)} SGT)`, `截至美东时间 ${tET(m.time)}（新加坡时间 ${tSG(m.time)}）`) : (m.time_et ? tl(`last trade ${m.time_et}`, `最后成交 ${m.time_et}`) : '')) + ` · ${venue} · ${fresh}` + (q.stale ? tl(' · last good update, retrying', ' · 最近一次有效更新，正在重试') : tl(' · refreshes every 15 s', ' · 每 15 秒刷新'));
+  const venue = CN ? tl('CNBC quote feed (Nasdaq last sale)') : m.kind === 'regular' ? (RH ? tl('Nasdaq last sale via Robinhood') : q.source) : ((q.ext && q.ext.venue) ? tl(`${q.ext.venue} via Robinhood 24-hour feed`) : (RH ? tl('Robinhood extended-hours feed') : q.source));
+  const fresh = CN ? (q.source_note === 'real-time' ? tl('real-time') : tl('may be delayed')) : q.source === 'Nasdaq.com quote API' && !/real-time/i.test(q.source_note || '') ? tl('may be delayed') : tl('real-time');
+  $('#lq-cap').textContent = (m.time ? tl(`as of ${tET(m.time)} ET (${tSG(m.time)} SGT)`) : (m.time_et ? tl(`last trade ${m.time_et}`) : '')) + ` · ${venue} · ${fresh}` + (q.stale ? tl(' · last good update, retrying') : tl(' · refreshes every 15 s'));
   /* vs-IPO box follows the live regular-session price */
-  const rp = q.regular && q.regular.price; if (rp) { const v = $('#mc-v'); if (v) v.textContent = 'US$' + fmt(rp * D.price.shares_bn / 1000, 2) + 'tn'; const s1 = $('#mc-s'); if (s1) s1.textContent = tl(`${fmt(D.price.shares_bn, 2)}bn shares × ${usd(rp)} (${reg ? 'live' : 'last regular close'}, calc.)`, `${fmt(D.price.shares_bn * 10, 1)}亿股 × ${usd(rp)}（${reg ? '实时' : '最近常规收盘'}，计算值）`); }
+  const rp = q.regular && q.regular.price; if (rp) { const v = $('#mc-v'); if (v) v.textContent = 'US$' + fmt(rp * D.price.shares_bn / 1000, 2) + 'tn'; const s1 = $('#mc-s'); if (s1) s1.textContent = tl(`${fmt(D.price.shares_bn, 2)}bn shares × ${usd(rp)} (${reg ? 'live' : 'last regular close'}, calc.)`); }
 
 }
 /* primary: CNBC free quote feed fetched straight from the browser (same approach as the META dashboard), mapped to the Worker's quote shape; Worker then TradingView as fallbacks */
@@ -200,7 +204,7 @@ async function pollQuote() {
     try { q = await cnbcQuote(); } catch (e1) { /* own CNBC feed failed: fall back to the shared Worker */ }
     if (!q) { const r = await fetch(QUOTE_API + (QUOTE_API.includes('?') ? '&' : '?') + 't=' + Date.now(), {cache: 'no-store', signal: ctl.signal}); q = await r.json(); }
     clearTimeout(to); if (!q || !q.ok || !q.main) throw new Error('bad quote');
-    LQ.fails = 0; LQ.ok = true; LQ.last = q; tvFallback(false); renderQuote(q); { const e = document.getElementById('lfstat'); if (e) e.textContent = tl(`Last tick $${Number((q.main || {}).price).toFixed(2)} at ${(q.main || {}).time_et || ''} · ${q.session_label || q.session || ''}`, `最新报价 $${Number((q.main || {}).price).toFixed(2)}，时间 ${(q.main || {}).time_et || ''} · ${q.session_label || q.session || ''}`); }
+    LQ.fails = 0; LQ.ok = true; LQ.last = q; tvFallback(false); renderQuote(q); { const e = document.getElementById('lfstat'); if (e) e.textContent = tl(`Last tick $${Number((q.main || {}).price).toFixed(2)} at ${(q.main || {}).time_et || ''} · ${q.session_label || q.session || ''}`); }
   } catch (e) {
     LQ.fails++;
     if (!LQ.ok || LQ.fails >= 4) tvFallback(true);
@@ -408,8 +412,8 @@ function peopleTab() {
   <div class="grid g2">
     <div class="card"><h3 style="margin-top:0">Elon Musk on X: Tesla posts <span class="mut">newest first · SGT · ${X.posts.length} posts</span></h3>
       <div class="chips" id="xchips">${topics.map((t, i) => `<button class="btn ${i ? '' : 'on'}" data-x="${esc(t)}">${esc(t)}</button>`).join('')}</div>
-      <div id="xlist" style="max-height:900px;overflow:auto">${X.posts.map(p => `<div class="xpost" data-topic="${esc(p.topic)}"><div class="t notr">${esc(p.text)}${LANG === 'zh' && p.zh ? `<br><span class="zhq">译文：${esc(p.zh)}</span>` : ''}</div><div class="m notr">${LANG === 'zh' ? `${esc(I18N.zhTok(dlong(p.sgt)))} ${esc(p.sgt.slice(11))} 新加坡时间 · ${esc(({post: '发帖', reply: '回复', quote: '引用', repost: '转发'})[p.kind] || p.kind)}${p.likes != null ? ' · ' + fmt(p.likes) + ' 赞' : ''} · <a href="${esc(p.url)}" target="_blank" rel="noopener">在 X 上打开</a>` : `${esc(dlong(p.sgt))} ${esc(p.sgt.slice(11))} SGT · ${esc(p.kind)} · ${esc(p.topic)}${p.likes != null ? ' · ' + fmt(p.likes) + ' likes' : ''} · <a href="${esc(p.url)}" target="_blank" rel="noopener">open on X</a>`}</div></div>`).join('') || '<div class="na">n/a — X feed not loaded</div>'}</div>
-      <ul class="notes"><li>${esc(X.source || '')} · ${esc(X.window || '')} · fetched ${esc(X.fetched_sgt || 'n/a')}. Text is verbatim (links trimmed); Chinese translations are shown under each post in 中文 mode. Refresh with build_x.py.</li></ul></div>
+      <div id="xlist" style="max-height:900px;overflow:auto">${X.posts.map(p => `<div class="xpost" data-topic="${esc(p.topic)}"><div class="t notr">${esc(p.text)}</div><div class="m notr">${esc(dlong(p.sgt))} ${esc(p.sgt.slice(11))} SGT · ${esc(p.kind)} · ${esc(p.topic)}${p.likes != null ? ' · ' + fmt(p.likes) + ' likes' : ''} · <a href="${esc(p.url)}" target="_blank" rel="noopener">open on X</a></div></div>`).join('') || '<div class="na">n/a — X feed not loaded</div>'}</div>
+      <ul class="notes"><li>${esc(X.source || '')} · ${esc(X.window || '')} · fetched ${esc(X.fetched_sgt || 'n/a')}. Text is verbatim (links trimmed). Refresh with build_x.py.</li></ul></div>
     <div><div class="card" style="margin-bottom:16px"><h3 style="margin-top:0">Executives and board</h3>${D.quotes.map(q => `<div class="rule"><b>${esc(q[0])}</b> <span class="mut">${esc(q[1])} · ${esc(q[2])}</span><blockquote>${esc(q[3])}</blockquote><div class="w">${q[4] ? ext(q[4], 'source') : 'pending'}</div></div>`).join('')}</div>
       <div class="card"><h3 style="margin-top:0">Musk’s stake and 2025 CEO Performance Award</h3>
       <div class="grid g2" style="margin-bottom:10px">${kpi('Shares owned', fmt(M.own_m, 1) + 'm', `${M.own_pct}% of shares out · ${M.own_date}`, M.own_src)}${kpi('2025 award', '423.7m', '12 tranches × 35.3m restricted shares', U.award)}</div>
@@ -502,7 +506,7 @@ const TABS = [['overview', 'Overview', overview], ['autos', 'Autos', autosTab], 
 const NAVL = {overview: 'Overview', autos: 'Autos', energy: 'Energy', robotaxi: 'Cybercab', fsd: 'FSD', optimus: 'Optimus', people: 'Key people', fin: 'Financials', val: 'Valuation', own: 'Ownership', comp: 'Competition', catalysts: 'Catalysts', sources: 'Sources'};
 const done = {}; let CDT = null;
 function cdText(t) { let s = Math.max(0, Math.floor((t - new Date()) / 1000)); const d = Math.floor(s / 86400); s -= d * 86400; const h = Math.floor(s / 3600); s -= h * 3600; const m = Math.floor(s / 60); s -= m * 60;
-  const u = LANG === 'zh' ? ['天', '时', '分', '秒'] : ['d', 'h', 'm', 's'];
+  const u = ['d', 'h', 'm', 's'];
   return `${d}<small>${u[0]}</small>${String(h).padStart(2, '0')}<small>${u[1]}</small>${String(m).padStart(2, '0')}<small>${u[2]}</small>${String(s).padStart(2, '0')}<small>${u[3]}</small>`; }
 function route() {
   let id = (location.hash || '#overview').slice(1).split('/')[0]; if (!TABS.some(t => t[0] === id)) id = 'overview';
@@ -510,24 +514,24 @@ function route() {
   $$('main section').forEach(s => s.classList.toggle('on', s.id === 's-' + id));
   const t = TABS.find(t => t[0] === id);
   if (!done[id]) { try { t[2](); } catch (e) { console.error('render ' + id, e); sec(id).insertAdjacentHTML('beforeend', `<div class="tvfail">This tab could not render: ${esc(e.message)}</div>`); } done[id] = 1; wireTables(sec(id)); wireXall(sec(id)); try { I18N.apply(sec(id)); } catch (e) { console.error('i18n ' + id, e); } }
-  document.title = tl(`${t[1]} · Tesla (TSLA) Dashboard · © 2026 Hugo Tian`, `${I18N.s(t[1])} · 特斯拉 (TSLA) 看板 · © 2026 Hugo Tian`);
+  document.title = tl(`${t[1]} · Tesla (TSLA) Dashboard · © 2026 Hugo Tian`);
 }
 function buildNav() { $('#nav').innerHTML = TABS.map(([id, l]) => `<a href="#${id}" data-t="${id}" title="${esc(l)}">${esc(NAVL[id] || l)}</a>`).join(''); $('#main').innerHTML = TABS.map(([id]) => `<section id="s-${id}"></section>`).join(''); I18N.apply($('#nav')); chrome(); }
 function chrome() {
-  $('.hero h1').innerHTML = tl('Tesla <span class="tk">$TSLA</span> Dashboard', '特斯拉 <span class="tk">$TSLA</span> 看板'); $('.brand .bn').textContent = tl('Dashboard', '看板');
-  $('.brand').setAttribute('aria-label', tl('Tesla dashboard home', '特斯拉看板首页'));
-  $('#flag-en').classList.toggle('on', LANG !== 'zh'); $('#flag-zh').classList.toggle('on', LANG === 'zh');
-  $('#langbtn').title = tl('Language: English · click for 中文', '语言：中文 · 点击切换为 English');
-  $('#themebtn').title = tl('Theme: follows your system until you pick one', '主题：默认跟随系统，点击可切换'); }
+  $('.hero h1').innerHTML = tl('Tesla <span class="tk">$TSLA</span> Dashboard'); $('.brand .bn').textContent = tl('Dashboard');
+  $('.brand').setAttribute('aria-label', tl('Tesla dashboard home'));
+
+
+  $('#themebtn').title = tl('Theme: follows your system until you pick one'); }
 function applyTheme(rerender) {
   const t = document.documentElement.dataset.theme || 'auto';
-  $('#themelbl').textContent = t === 'auto' ? tl('Auto', '自动') : t === 'dark' ? tl('Dark', '深色') : tl('Light', '浅色'); $('#themeic').textContent = t === 'auto' ? '◐' : t === 'dark' ? '☾' : '☀';
+  $('#themelbl').textContent = t === 'auto' ? tl('Auto') : t === 'dark' ? tl('Dark') : tl('Light'); $('#themeic').textContent = t === 'auto' ? '◐' : t === 'dark' ? '☾' : '☀';
   if (!rerender) return; palette(); Object.keys(charts).forEach(k => { try { charts[k].destroy(); } catch (e) {} delete charts[k]; }); for (const k in done) delete done[k]; buildNav(); hero(); route();
 }
 $('#themebtn').onclick = () => { const cur = document.documentElement.dataset.theme || 'auto'; const nx = cur === 'auto' ? (isDark() ? 'light' : 'dark') : cur === 'dark' ? 'light' : 'auto';
   if (nx === 'auto') { delete document.documentElement.dataset.theme; try { localStorage.removeItem('tsla-theme'); } catch (e) {} } else { document.documentElement.dataset.theme = nx; try { localStorage.setItem('tsla-theme', nx); } catch (e) {} } applyTheme(true); };
-$('#langbtn').onclick = () => { LANG = LANG === 'zh' ? 'en' : 'zh'; const h = document.documentElement; h.dataset.lang = LANG; h.lang = LANG === 'zh' ? 'zh-CN' : 'en';
-  try { localStorage.setItem('tsla-lang', LANG); } catch (e) {} LQ.tv = false; applyTheme(true); };
+
+
 if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (!document.documentElement.dataset.theme) applyTheme(true); });
 $('#foot').innerHTML = `© 2026 Hugo Tian. All rights reserved. · Not investment advice.`;
 palette(); Chart.defaults.devicePixelRatio = Math.max(2, window.devicePixelRatio || 1); buildNav(); applyTheme(false); hero(); route(); addEventListener('hashchange', route);
