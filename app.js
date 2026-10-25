@@ -1,7 +1,7 @@
 /* English only */
 const LANG = 'en';
 const tl = en => en;
-const I18N = {apply() {}, s: x => x, zhTok: x => x, tvLocale: () => 'en'};
+const I18N = {apply() {}, s: x => x, zhTok: x => x, tvLocale: () => 'en', chartCfg: c => c};
 /* Tesla (TSLA) Dashboard · © 2026 Hugo Tian. All rights reserved. Data from data.js (build_data.py), x_feed.js (build_x.py). */
 'use strict';
 const D = window.TSLA_DATA;
@@ -258,8 +258,14 @@ function weekCard() {
   const src = (lab, u) => `${esc(lab)} <span style="font-size:12px">${ext(u)}</span>`;
   const li = D.week.map(r => `<li><span class="mut" style="font-size:12px">${esc(r[0])} · ${esc(r[1])}</span><br>${src(r[2], r[3])}</li>`).join('');
   const nx = D.next.map(r => `<li><b>${esc(r[0])}</b> · ${esc(r[1])}</li>`).join('');
-  return card('wk', 'What changed this week', '23 Oct 2026 · last 7 days · newest first', `<div class="grid g2"><div><ul class="lst">${li}</ul></div><div><h3 style="margin-top:0">Coming up</h3><ul class="lst">${nx}</ul></div></div>`);
+  return card('wk', 'What changed this week', '26 Oct 2026 · last 7 days · newest first', `<div class="grid g2"><div><ul class="lst">${li}</ul></div><div><h3 style="margin-top:0">Coming up</h3><ul class="lst">${nx}</ul></div></div>`);
 }
+function videoCard(n) {
+  const V = D.videos || {rows: []}; const rows = n ? V.rows.slice(0, n) : V.rows;
+  const li = rows.map(r => `<li><span class="mut" style="font-size:12px">${esc(r[0])} · ${esc(r[1])}</span><br><a href="${esc(r[3])}" target="_blank" rel="noopener">${esc(r[2])}</a><br><span style="font-size:13px">${esc(r[4])}</span></li>`).join('') || '<li class="na">No material videos captured.</li>';
+  return card('yt', 'YouTube / video', `material segments · newest first · as of ${V.asof || 'n/a'}`, `<ul class="lst">${li}</ul><div class="mut" style="font-size:11.5px;margin-top:8px">Takeaways are drawn from each video’s captions/transcript or its YouTube description, not from watching it. Commentary and opinions are the speakers’ own${n && V.rows.length > n ? ` · <a href="#video">all ${V.rows.length} videos</a>` : ''}.</div>`);
+}
+function videoTab() { sec('video').innerHTML = `<h2>YouTube / video <span class="mut">earnings follow-ups, exec interviews, TV segments, analyst channels</span></h2>${videoCard()}`; }
 function promiseCard(filter) {
   const rows = D.promises.filter(r => !filter || filter.includes(r[2]));
   const n = k => rows.filter(r => r[5].startsWith(k)).length;
@@ -311,6 +317,7 @@ function overview() {
     <div class="card"><h3>Key numbers (with dates)</h3>${tableBlock({columns: ['Metric', 'Value', 'As of'], rows: keyRows}, {id: 'tKey', csvname: 'Key numbers', wrap: true, cls: 'keyt'})}</div>
     <div class="card"><h3>Key takeaways</h3><ul class="lst">${D.takeaways.map(t => `<li>${esc(t)}</li>`).join('')}</ul><div class="mut" style="font-size:11.5px;margin-top:8px">Sources: Tesla quarterly updates, P&D releases and the tabs of this dashboard.</div></div></div>
   ${weekCard()}
+  ${videoCard(4)}
   <div class="card" style="margin:16px 0;border-left:3px solid var(--acc)"><h3 style="margin-top:0">SpaceX–Tesla merger review</h3>${tableBlock({columns: ['Item', 'Status'], rows: [['Status', D.merger.status], ['Terms / exchange ratio', 'pending (not disclosed)'], ['Approval needed', D.merger.vote], ['Source', D.merger.src]]}, {id: 'tMerge', wrap: true})}</div>
   <div class="grid g2" style="margin-bottom:16px">${ccard('ovDel', 'Deliveries and production by quarter', 'Tesla P&D releases')}${ccard('ovRev', 'Revenue by segment (US$m)', 'Tesla quarterly updates')}</div>
   <div class="card"><h3 style="margin-top:0">TSLA live chart <span class="mut" style="font-size:12px;font-weight:400">${TV_SYM} · TradingView</span></h3><div class="tvchart" id="tvchart"></div></div>`;
@@ -368,7 +375,7 @@ function robotaxiTab() {
   ${tableBlock({title: 'Robotaxi service by metro', columns: ['Metro', 'Launched', 'Status', 'Source'], rows: D.robotaxi}, {id: 'tRT', wrap: true, notes: ['Status per Tesla Q2 2026 update (“Ramping Unsupervised” / “Safety Driver”) plus later company posts. Fleet counts from community trackers are not used.']})}
   <div class="grid g2" style="margin:16px 0">
     <div class="card"><h3 style="margin-top:0">Cybercab facts</h3>${ul([`Public paid rides in Austin since <b>4 Sep 2026</b>, the day after the launch event. ${ext(U.cab)}`, `No steering wheel or pedals; 48 kWh battery, 219 hp motor (EPA filing). ${ext(U.cab)}`, `Engineering test drives on public roads and employee rides at Giga Texas began in Q2/July 2026. ${ext(U.q2deck)}`, `Next city: Dallas “soon” (Ashok Elluswamy, 10 Oct); no date. ${ext('https://x.com/aelluswamy/status/2108986941127696515')}`])}</div>
-    <div class="card"><h3 style="margin-top:0">Regulatory</h3>${ul([`<b>NHTSA:</b> Tesla must explain under oath by <b>30 Oct 2026</b> how a car with no steering wheel or pedals was certified. ${ext(U.tnorth)}`, `<b>California:</b> Bay Area runs FSD (Supervised) with safety drivers under CPUC TCP permit TCP0046782-A; no driverless deployment permit from the CPUC or DMV disclosed. ${ext(U.q2deck)}`, `<b>Texas / Florida:</b> unsupervised service in 6 metros (no state ride-hail permit required in Tesla’s disclosures). ${ext(U.q2deck)}`])}</div></div>
+    <div class="card"><h3 style="margin-top:0">Regulatory</h3>${ul([`<b>NHTSA:</b> Tesla must explain under oath by <b>30 Oct 2026</b> how a car with no steering wheel or pedals was certified. ${ext(U.tnorth)}`, `<b>NHTSA rulemaking (23 Oct 2026):</b> proposed FMVSS 108 update adds optional cyan ADS marker lamps and drops manual lighting-control requirements for driverless vehicles. ${ext(U.fmvss108)}`, `<b>California:</b> Bay Area runs FSD (Supervised) with safety drivers under CPUC TCP permit TCP0046782-A; no driverless deployment permit from the CPUC or DMV disclosed. ${ext(U.q2deck)}`, `<b>Texas / Florida:</b> unsupervised service in 6 metros (no state ride-hail permit required in Tesla’s disclosures). ${ext(U.q2deck)}`])}</div></div>
   ${promiseCard(['Cybercab', 'Robotaxi'])}`;
 }
 
@@ -433,7 +440,7 @@ function finTab() {
   <div class="grid g4" style="margin-bottom:16px">
     ${kpi('Q3 2026 revenue', mm(F.rev[5]), `${pct((F.rev[5] / F.rev[1] - 1) * 100)} YoY · Tesla consensus US$28,341m`, U.q3deck)}${kpi('Q3 2026 operating margin', F.opm[5] + '%', `vs ${F.opm[1]}% a year earlier · consensus 2.5%`, U.q3deck)}${kpi('Q3 2026 capex', mm(-F.capex[5]), `${pct((F.capex[5] / F.capex[1] - 1) * 100)} YoY · 2026 guide ~US$20bn`, U.q3call)}${kpi('Q3 2026 free cash flow', mm(F.fcf[5]), `cash ${bn(F.cash[5])}`, U.q3deck)}</div>
   <div class="grid g2" style="margin-bottom:16px">${ccard('fiCf', 'Operating cash flow, capex and free cash flow (US$m)', 'per quarter')}${ccard('fiMg', 'Margins (%)', 'gross, auto ex-credits, operating')}</div>
-  ${tableBlock({title: 'Income statement, cash flow and balance sheet', columns: ['US$m', ...D.fcols], rows}, {id: 'tFin', csvname: 'TSLA financials', colorLatest: true, noLatest: true, notes: ['Source: Tesla Q3 2026 update (financial summary, statement of operations, balance sheet, cash flows; Q3 2025–Q3 2026) ' + U.q3deck + ' ; also filed as 8-K exhibit 99.1 ' + U.q3_8k + ' . Q2 2025 from the Q2 2026 update ' + U.q2deck, 'The Q3 2026 10-Q had not been filed when this build was made; figures are from the unaudited update deck.']})}
+  ${tableBlock({title: 'Income statement, cash flow and balance sheet', columns: ['US$m', ...D.fcols], rows}, {id: 'tFin', csvname: 'TSLA financials', colorLatest: true, noLatest: true, notes: ['Source: Tesla Q3 2026 update (financial summary, statement of operations, balance sheet, cash flows; Q3 2025–Q3 2026) ' + U.q3deck + ' ; also filed as 8-K exhibit 99.1 ' + U.q3_8k + ' . Q2 2025 from the Q2 2026 update ' + U.q2deck, 'Figures are from the unaudited update deck; the Q3 2026 10-Q was filed 21 Oct 2026 ' + U.q3_10q]})}
   ${tableBlock({title: `Q3 2026 and FY2026 consensus (company-compiled, ${C3.n} analysts, ${C3.asof})`, columns: ['Line', 'Q3 2026 average', 'Q3 2026 actual', 'FY2026 average'], rows: C3.rows.map((r, k) => [r[0], r[1], D.actual.q3[k], r[2]])}, {id: 'tCons', notes: ['Source: Tesla IR “Q3 2026 Earnings Consensus” ' + C3.src + ' . Tesla does not endorse these estimates. Actuals: Q3 2026 update ' + U.q3deck + ' . Street (third-party) consensus per Investing.com: non-GAAP EPS US$0.45, revenue US$27.92bn ' + D.actual.street_src]})}`;
   chart('fiCf', {type: 'bar', data: {labels: D.fcols.map(qs), datasets: [{label: 'Operating cash flow', data: F.ocf, backgroundColor: C.g3}, {label: 'Capex', data: F.capex, backgroundColor: C.g2}, {label: 'Free cash flow', data: F.fcf, backgroundColor: C.acc}]}, options: {plugins: {tooltip: {callbacks: {label: c => `${c.dataset.label}: ${mm(c.raw)}`}}}}});
   chart('fiMg', {type: 'line', data: {labels: D.fcols.map(qs), datasets: [{label: 'Total gross margin', data: F.tgm, borderColor: C.g2, backgroundColor: C.g2}, {label: 'Auto GM ex-credits', data: F.agm_x, borderColor: C.acc, backgroundColor: C.acc}, {label: 'Operating margin', data: F.opm, borderColor: C.g, backgroundColor: C.g}]}, options: {scales: {y: {ticks: {callback: v => v + '%'}}}}});
@@ -502,8 +509,8 @@ function sources() {
 
 /* ---------------- router & theme ---------------- */
 const TABS = [['overview', 'Overview', overview], ['autos', 'Autos', autosTab], ['energy', 'Energy', energyTab], ['robotaxi', 'Cybercab & Robotaxi', robotaxiTab], ['fsd', 'FSD', fsdTab], ['optimus', 'Optimus', optimusTab],
-  ['people', 'Key people', peopleTab], ['fin', 'Financials', finTab], ['val', 'Valuation & Street', valTab], ['own', 'Ownership', ownTab], ['comp', 'China & competition', compTab], ['catalysts', 'Catalysts', catTab], ['sources', 'Sources', sources]];
-const NAVL = {overview: 'Overview', autos: 'Autos', energy: 'Energy', robotaxi: 'Cybercab', fsd: 'FSD', optimus: 'Optimus', people: 'Key people', fin: 'Financials', val: 'Valuation', own: 'Ownership', comp: 'Competition', catalysts: 'Catalysts', sources: 'Sources'};
+  ['people', 'Key people', peopleTab], ['fin', 'Financials', finTab], ['val', 'Valuation & Street', valTab], ['own', 'Ownership', ownTab], ['comp', 'China & competition', compTab], ['catalysts', 'Catalysts', catTab], ['video', 'YouTube / video', videoTab], ['sources', 'Sources', sources]];
+const NAVL = {overview: 'Overview', autos: 'Autos', energy: 'Energy', robotaxi: 'Cybercab', fsd: 'FSD', optimus: 'Optimus', people: 'Key people', fin: 'Financials', val: 'Valuation', own: 'Ownership', comp: 'Competition', catalysts: 'Catalysts', video: 'Video', sources: 'Sources'};
 const done = {}; let CDT = null;
 function cdText(t) { let s = Math.max(0, Math.floor((t - new Date()) / 1000)); const d = Math.floor(s / 86400); s -= d * 86400; const h = Math.floor(s / 3600); s -= h * 3600; const m = Math.floor(s / 60); s -= m * 60;
   const u = ['d', 'h', 'm', 's'];
