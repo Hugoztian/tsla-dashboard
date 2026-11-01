@@ -258,7 +258,7 @@ function weekCard() {
   const src = (lab, u) => `${esc(lab)} <span style="font-size:12px">${ext(u)}</span>`;
   const li = D.week.map(r => `<li><span class="mut" style="font-size:12px">${esc(r[0])} · ${esc(r[1])}</span><br>${src(r[2], r[3])}</li>`).join('');
   const nx = D.next.map(r => `<li><b>${esc(r[0])}</b> · ${esc(r[1])}</li>`).join('');
-  return card('wk', 'What changed this week', '28 Oct 2026 · last 7 days · newest first', `<div class="grid g2"><div><ul class="lst">${li}</ul></div><div><h3 style="margin-top:0">Coming up</h3><ul class="lst">${nx}</ul></div></div>`);
+  return card('wk', 'What changed this week', D.week_label || '28 Oct 2026 · last 7 days · newest first', `<div class="grid g2"><div><ul class="lst">${li}</ul></div><div><h3 style="margin-top:0">Coming up</h3><ul class="lst">${nx}</ul></div></div>`);
 }
 function videoCard(n) {
   const V = D.videos || {rows: []}; const rows = n ? V.rows.slice(0, n) : V.rows;
@@ -484,7 +484,7 @@ function compTab() {
     ${kpi('BYD Q3 2026 passenger BEVs', fmt(K.q3[0][1]), `${K.q3[0][2]} · ${fmt(K.q3[0][1] / K.q3[1][1], 2)}x Tesla’s deliveries`, U.byd)}
     ${kpi('Tesla China share (Sep)', '6.0%', 'NEV retail, 4th place · 64,837 units', U.cpca)}
     ${kpi('BYD China share (Sep)', '22.8%', 'NEV retail · 246,816 units', U.cpca)}
-    ${kpi('BYD BEV passenger sales (Sep)', fmt(K.bydsep_bev), '+33.2% YoY · 9M NEV total ' + fmt(K.byd9m), U.bydsep)}</div>
+    ${K.byd_mo ? kpi(`BYD BEV passenger sales (${K.byd_mo.m})`, fmt(K.byd_mo.bev), `${K.byd_mo.yoy} · ${K.byd_mo.ytd_lbl} ${fmt(K.byd_mo.ytd)}`, K.byd_mo.src) : kpi('BYD BEV passenger sales (Sep)', fmt(K.bydsep_bev), '+33.2% YoY · 9M NEV total ' + fmt(K.byd9m), U.bydsep)}</div>
   <div class="grid g2" style="margin-bottom:16px">${ccard('coQ3', 'Q3 2026 battery-electric volumes', 'BYD passenger BEV vs Tesla deliveries')}${ccard('coCn', 'China NEV retail share, September 2026 (%)', 'CPCA · domestic retail, excl. exports')}</div>
   ${tableBlock({title: 'China NEV retail, September 2026 (CPCA)', columns: ['Maker / group', 'Retail sales', 'Share %'], rows: K.cn_sep}, {id: 'tCn', notes: [`Total NEV retail ${K.cn_total}m (−16.7% YoY). Source: CPCA via CnEVPost ${U.cpca} . CPCA ranks groups, domestic retail only.`]})}
   ${tableBlock({title: 'Valuation gap', columns: ['Company', 'Market cap', 'P/E (ttm)', 'P/E (fwd)', 'EV/sales', 'EV/EBITDA', 'Gross margin %', 'Price', 'Source'], rows: D.peers.slice(0, 2)}, {id: 'tGap'})}`;
