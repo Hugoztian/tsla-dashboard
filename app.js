@@ -258,7 +258,7 @@ function weekCard() {
   const src = (lab, u) => `${esc(lab)} <span style="font-size:12px">${ext(u)}</span>`;
   const li = D.week.map(r => `<li><span class="mut" style="font-size:12px">${esc(r[0])} · ${esc(r[1])}</span><br>${src(r[2], r[3])}</li>`).join('');
   const nx = D.next.map(r => `<li><b>${esc(r[0])}</b> · ${esc(r[1])}</li>`).join('');
-  return card('wk', 'What changed this week', D.week_label || '28 Oct 2026 · last 7 days · newest first', `<div class="grid g2"><div><ul class="lst">${li}</ul></div><div><h3 style="margin-top:0">Coming up</h3><ul class="lst">${nx}</ul></div></div>`);
+  return card('wk', 'What’s new this week', D.week_label || 'last 7 days · newest first', `<div class="grid g2"><div><ul class="lst">${li}</ul></div><div><h3 style="margin-top:0">Coming up</h3><ul class="lst">${nx}</ul></div></div>`);
 }
 function videoCard(n) {
   const V = D.videos || {rows: []}; const rows = n ? V.rows.slice(0, n) : V.rows;
@@ -312,11 +312,11 @@ function overview() {
     ['Analysts (TipRanks, third-party)', `Moderate Buy · avg target US$${D.street.tip.avg} (${D.street.tip.buy} buy / ${D.street.tip.hold} hold / ${D.street.tip.sell} sell)`, 'Oct 2026'],
     ['Elon Musk', `${D.musk.own_pct}% of shares (${fmt(D.musk.own_m, 1)}m) + 2025 CEO award of 423.7m restricted shares`, 'Jun 2026']];
   sec('overview').innerHTML = `<h2>Overview</h2>
+  ${weekCard()}
   <p class="lead">Tesla makes EVs (Model 3/Y, Cybertruck, Semi), energy storage (Megapack, Powerwall) and is betting its valuation on <b>autonomy</b> (FSD, Robotaxi, Cybercab) and <b>Optimus</b> robots. Car volumes are recovering but margins are thin and capex has surged; regulators and the new <b>SpaceX merger review</b> are the swing factors.</p>
   <div class="grid g2" style="margin-bottom:16px">
     <div class="card"><h3>Key numbers (with dates)</h3>${tableBlock({columns: ['Metric', 'Value', 'As of'], rows: keyRows}, {id: 'tKey', csvname: 'Key numbers', wrap: true, cls: 'keyt'})}</div>
     <div class="card"><h3>Key takeaways</h3><ul class="lst">${D.takeaways.map(t => `<li>${esc(t)}</li>`).join('')}</ul><div class="mut" style="font-size:11.5px;margin-top:8px">Sources: Tesla quarterly updates, P&D releases and the tabs of this dashboard.</div></div></div>
-  ${weekCard()}
   ${videoCard(4)}
   <div class="card" style="margin:16px 0;border-left:3px solid var(--acc)"><h3 style="margin-top:0">SpaceX–Tesla merger review</h3>${tableBlock({columns: ['Item', 'Status'], rows: [['Status', D.merger.status], ['Terms / exchange ratio', 'pending (not disclosed)'], ['Approval needed', D.merger.vote], ['Source', D.merger.src]]}, {id: 'tMerge', wrap: true})}</div>
   <div class="grid g2" style="margin-bottom:16px">${ccard('ovDel', 'Deliveries and production by quarter', 'Tesla P&D releases')}${ccard('ovRev', 'Revenue by segment (US$m)', 'Tesla quarterly updates')}</div>
