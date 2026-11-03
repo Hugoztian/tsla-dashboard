@@ -261,8 +261,8 @@ function weekCard() {
   const src = (lab, u) => `${esc(lab)} <span style="font-size:12px">${ext(u)}</span>`;
   const now = Date.now(), DAY = 864e5;
   const rows = D.whatsNewThisWeek.map((r, i) => ({r, i, t: wnEnd(r.date)})).filter(o => !o.t || now - o.t < 8 * DAY).sort((a, b) => b.t - a.t || a.i - b.i);
-  const li = rows.map(({r, t}) => { const fresh = t && now - (t + DAY) <= 2 * DAY; return `<li class="${fresh ? 'wn-new' : 'wn-old'}"><span style="font-size:12px" class="${fresh ? '' : 'mut'}">${esc(r.date)} · <b>${esc(r.headline)}</b>${fresh ? ' <span class="wn-tag">≤48h</span>' : ''}</span><br>${r.detail ? src(r.detail, r.url) : (r.url ? ext(r.url) : '')}</li>`; }).join('');
-  return card('wk', 'What’s new this week', 'last 7 days · newest first · blue = last 48h', `<style>.wn-new{color:#1e6fe0;border-left:3px solid #1e6fe0;padding-left:8px}.wn-new a{color:#1e6fe0}.wn-tag{font-size:10px;background:#1e6fe0;color:#fff;border-radius:6px;padding:0 5px}</style><ul class="lst">${li}</ul>`);
+  const li = rows.map(({r, t}) => { const fresh = t && now - (t + DAY) <= 2 * DAY; return `<li class="${fresh ? 'wn-new new48' : 'wn-old'}"><span style="font-size:12px" class="${fresh ? '' : 'mut'}">${esc(r.date)} · <b>${esc(r.headline)}</b>${fresh ? ' <span class="wn-tag badge48">≤48h</span>' : ''}</span><br>${r.detail ? src(r.detail, r.url) : (r.url ? ext(r.url) : '')}</li>`; }).join('');
+  return `<div class="card" id="wk" style="margin:16px 0;border-left:3px solid var(--acc)"><h3 style="margin-top:0">What’s new this week <span class="mut">last 7 days · newest first · Tesla red = last 48h</span></h3><style>.wn-new,.new48{color:var(--acc);border-left:3px solid var(--acc);padding-left:8px}.wn-new a,.new48 a{color:var(--acc)}.wn-tag,.badge48{font-size:10px;background:var(--acc);color:#fff;border-radius:6px;padding:0 5px}</style><ul class="lst">${li}</ul></div>`;
 }
 function comingKey(d) { if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d; if (/^\d{4}-\d{2}$/.test(d)) return d + '-31'; const y = String(d).match(/(\d{4})/); return y ? y[1] + (/1H|Q1/.test(d) ? '-06' : '-12') + '-99' : '9999'; }
 function comingCard() {
