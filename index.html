@@ -8,16 +8,16 @@
 <meta name="description" content="Tesla, Inc. (Nasdaq: TSLA) investor dashboard: live price, autos, energy, Cybercab and Robotaxi, FSD, Optimus, key people, valuation, ownership and short interest.">
 <meta name="copyright" content="© 2026 Hugo Tian. All rights reserved.">
 <meta name="color-scheme" content="light dark">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=1793690403">
-<link rel="apple-touch-icon" href="icon-180.png?v=1793690403">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=1793690460">
+<link rel="apple-touch-icon" href="icon-180.png?v=1793690460">
 <script>(function(){var h=document.documentElement;try{var t=localStorage.getItem('tsla-theme');if(t==='light'||t==='dark')h.dataset.theme=t;}catch(e){}
 if(/[?&]collect=1/.test(location.search))window.__I18N_COLLECT=new Set();})();</script>
 <script src="vendor/chart.umd.min.js"></script>
 <script src="vendor/hammer.min.js"></script>
 <script src="vendor/chartjs-plugin-zoom.min.js"></script>
 <script src="vendor/chartjs-plugin-annotation.min.js"></script>
-<script src="data.js?v=1793690403"></script>
-<script src="x_feed.js?v=1793690403"></script>
+<script src="data.js?v=1793690460"></script>
+<script src="x_feed.js?v=1793690460"></script>
 <style>
 /* Minimal Apple-style system: neutral surfaces, whitespace over lines, one Tesla red as the only accent */
 :root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -258,10 +258,19 @@ footer .flink{color:var(--mut)}footer .flink:hover{color:var(--acc)}
 .xpost{padding:12px 0;border-bottom:1px solid var(--line)}.xpost:last-child{border-bottom:0}.xpost .t{font-size:14px;line-height:1.5;white-space:pre-line}.xpost .m{font-size:11.5px;color:var(--mut2);margin-top:4px}
 .est{display:inline-block;font-size:10.5px;font-weight:600;padding:0 6px;border-radius:99px;background:color-mix(in srgb,var(--warn) 14%,transparent);color:var(--warn);vertical-align:middle}
 .ok{color:var(--pos)}.bad{color:var(--neg)}
+/* Overview What’s new — Meta pattern, Tesla --acc */
+.week{list-style:none;margin:6px 0 0;padding:0}
+.week li{margin:0 0 10px;line-height:1.55;font-size:13.5px}
+.week li.new48,.week li.new48 a{color:var(--acc);font-weight:600}
+.week li.new48 .src{font-weight:400;color:var(--mut)}
+.week li:not(.new48),.week li:not(.new48) a{color:var(--mut)}
+.week .nb{display:inline-block;background:var(--acc);color:#fff;font-size:11px;border-radius:8px;padding:0 6px;margin-right:6px;font-weight:600}
+.week .d{display:inline-block;min-width:92px;color:var(--mut);font-variant-numeric:tabular-nums;margin-right:6px}
+.week .src{font-size:12.5px;color:var(--mut);margin-top:2px;font-weight:400}
 </style>
 </head>
 <body>
-<header><div class="bar"><a class="brand" href="#overview" aria-label="Tesla dashboard home"><img class="mlogo" src="seal.png?v=1793690403" alt="Tesla" width="28" height="28"><span class="bn">Dashboard</span></a><nav id="nav"></nav><div class="hbtns"><button class="themebtn" id="themebtn" title="Theme: follows your system until you pick one"><span id="themeic">◐</span><span class="tl2" id="themelbl">Auto</span></button></div></div></header>
+<header><div class="bar"><a class="brand" href="#overview" aria-label="Tesla dashboard home"><img class="mlogo" src="seal.png?v=1793690460" alt="Tesla" width="28" height="28"><span class="bn">Dashboard</span></a><nav id="nav"></nav><div class="hbtns"><button class="themebtn" id="themebtn" title="Theme: follows your system until you pick one"><span id="themeic">◐</span><span class="tl2" id="themelbl">Auto</span></button></div></div></header>
 <div class="hero"><h1>Tesla <span class="tk">$TSLA</span> Dashboard</h1>
   <div class="sub" id="updated"></div>
   <div class="h4" id="hero4"></div>
@@ -270,6 +279,6 @@ footer .flink{color:var(--mut)}footer .flink:hover{color:var(--acc)}
 <main id="main"></main>
 <footer id="foot"></footer>
 <div id="tip" role="tooltip"></div>
-<script src="app.js?v=1793690403"></script>
+<script src="app.js?v=1793690460"></script>
 </body>
 </html>

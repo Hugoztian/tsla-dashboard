@@ -258,11 +258,14 @@ const WNMON = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:1
 /* end date of an item's date label ('29–30 Oct 2026', '30 Oct – 1 Nov 2026') as SGT ms */
 function wnEnd(d) { const m = String(d).match(/(\d{1,2})\s+([A-Z][a-z]{2})[a-z]*\s+(\d{4})\s*$/); return m ? Date.UTC(+m[3], WNMON[m[2]], +m[1]) - 8 * 3600e3 : 0; }
 function weekCard() {
-  const src = (lab, u) => `${esc(lab)} <span style="font-size:12px">${ext(u)}</span>`;
   const now = Date.now(), DAY = 864e5;
   const rows = D.whatsNewThisWeek.map((r, i) => ({r, i, t: wnEnd(r.date)})).filter(o => !o.t || now - o.t < 8 * DAY).sort((a, b) => b.t - a.t || a.i - b.i);
-  const li = rows.map(({r, t}) => { const fresh = t && now - (t + DAY) <= 2 * DAY; return `<li class="${fresh ? 'wn-new new48' : 'wn-old'}"><span style="font-size:12px" class="${fresh ? '' : 'mut'}">${esc(r.date)} · <b>${esc(r.headline)}</b>${fresh ? ' <span class="wn-tag badge48">≤48h</span>' : ''}</span><br>${r.detail ? src(r.detail, r.url) : (r.url ? ext(r.url) : '')}</li>`; }).join('');
-  return `<div class="card" id="wk" style="margin:16px 0;border-left:3px solid var(--acc)"><h3 style="margin-top:0">What’s new this week <span class="mut">last 7 days · newest first · Tesla red = last 48h</span></h3><style>.wn-new,.new48{color:var(--acc);border-left:3px solid var(--acc);padding-left:8px}.wn-new a,.new48 a{color:var(--acc)}.wn-tag,.badge48{font-size:10px;background:var(--acc);color:#fff;border-radius:6px;padding:0 5px}</style><ul class="lst">${li}</ul></div>`;
+  const li = rows.map(({r, t}) => {
+    const fresh = t && now - (t + DAY) <= 2 * DAY;
+    const head = r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.headline)}</a>` : esc(r.headline);
+    return `<li class="${fresh ? 'new48' : ''}"><span class="d">${esc(r.date)}</span>${fresh ? '<span class="nb">48h</span>' : ''}${head}${r.detail ? `<div class="src">${esc(r.detail)}</div>` : ''}</li>`;
+  }).join('');
+  return `<div class="card" id="whatsnew" style="margin:16px 0;border-left:4px solid var(--acc)"><h3 style="margin-top:0">What’s new this week</h3><ul class="week">${li}</ul><p class="src" style="margin-top:10px">Last 7 days · newest first · ≤48h items use Tesla red (<code>var(--acc)</code>). Updated ${esc(D.lastUpdated || '')} SGT.</p></div>`;
 }
 function comingKey(d) { if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d; if (/^\d{4}-\d{2}$/.test(d)) return d + '-31'; const y = String(d).match(/(\d{4})/); return y ? y[1] + (/1H|Q1/.test(d) ? '-06' : '-12') + '-99' : '9999'; }
 function comingCard() {
