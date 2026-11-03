@@ -164,6 +164,7 @@ const U = {
 };
 const Q = ["Q1 2025", "Q2 2025", "Q3 2025", "Q4 2025", "Q1 2026", "Q2 2026", "Q3 2026"];
 return {
+  lastUpdated: 'Tue 3 Nov 2026, 14:41 SGT',  // refreshed by each daily scan / deploy (Asia/Singapore)
   U, meta: {built_sgt: '2026-11-03 07:59 SGT', cik: '1318605', next_earnings: 'Q3 2026 results reported after the US close Wed 21 Oct 2026 (Q3 update deck and 8-K exhibit 99.1); Q4 2026 date not yet announced', q3_reported: true},
   price: {close: 403.82, close_date: '2026-11-02', mcap_bn: 1600, ev_bn: 1570, shares_bn: 3.95, pe: 443.67, fpe: 188.90, ps: 15.59, evs: 15.31, eve: 161.18, pb: 17.70, hi52: 498.83, lo52: 297.38, src: U.px1102, note: 'Close Mon 2 Nov 2026 US$403.82 (+1.00% / +US$4.01; open 404.66, high 414.23, low 397.61; 43.1m shares) per StockAnalysis.com (S&P Global data); Fri 30 Oct close US$399.81 (−0.87%). Mon after hours ≈US$404.32. Market cap, EV and valuation ratios are StockAnalysis.com figures at the 2 Nov close (3.95bn shares; net cash US$29.00bn: cash US$45.45bn, debt US$16.45bn). LTM revenue US$103.57bn, net income US$3.22bn. Next session Tue 3 Nov US (US midterm election day; Tue night SGT).'},
   /* Operational summary — Tesla quarterly update decks (Q1-26 deck for Q1-25; Q2-26 deck for Q2-25..Q2-26; Q3-26 deck for Q3-26) */

@@ -277,7 +277,7 @@ function promiseCard(filter) {
 /* ---------------- hero ---------------- */
 function hero() {
   const P = D.price;
-  $('#updated').innerHTML = `© 2026 Hugo Tian. All rights reserved.`;
+  $('#updated').innerHTML = `<strong>Last updated: ${esc(D.lastUpdated || 'n/a')}</strong> · © 2026 Hugo Tian. All rights reserved.`;
   $('#hero4').innerHTML = [
     `<div class="hcard live"><div id="lq" class="lq" aria-live="polite" style="display:none"><div class="lq-top"><span class="lq-sess"><i class="lq-dot"></i><span id="lq-sl">Connecting to live quote…</span></span><span class="lq-sym">TSLA · Nasdaq</span></div>
        <div class="lq-row"><span class="lq-k" id="lq-k"></span><span class="lq-px" id="lq-px">—</span><span class="lq-ch" id="lq-ch"></span></div><div class="lq-sub" id="lq-sub"></div><div class="lq-cap" id="lq-cap"></div></div>
