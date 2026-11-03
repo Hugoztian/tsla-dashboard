@@ -201,6 +201,18 @@ return {
   actual: {q3: [20560, 2881, 4605, 28046, 5494, '19.6%', -4776, 718, '2.6%'], street_eps: 0.45, street_rev: 27920, street_src: U.q3inv, capex_guide_bn: 20, close_1021: 386.47},
   consensus: {asof: '19 Oct 2026', n: 23, rows: [['Automotive revenue', 20272, 76454], ['Energy generation & storage revenue', 3720, 13736], ['Services & other revenue', 4349, 16970], ['Total revenue', 28341, 107130], ['Gross profit', 5061, 19673], ['Gross margin', '17.9%', '18.4%'], ['Operating expenses (GAAP)', -4340, -16829], ['Income from operations', 721, 2844], ['Operating margin', '2.5%', 'n/a']], src: U.cons},
   capacity: [['California (Fremont)', 'Model 3 / Model Y', '>550,000', 'Production'], ['Shanghai', 'Model 3 / Model Y', '>950,000', 'Production'], ['Berlin', 'Model Y', '>375,000', 'Production'], ['Texas', 'Model Y', '>375,000', 'Production'], ['Texas', 'Cybertruck', '>125,000', 'Production'], ['Texas', 'Cybercab', '>125,000', 'Production'], ['Nevada', 'Tesla Semi', '25,000', 'Production'], ['TBD', 'Roadster', 'n/a', 'Design development'], ['California', 'Megapack', '40 GWh', 'Production'], ['Nevada', 'Powerwall', '>6 GWh', 'Production'], ['Shanghai', 'Megapack', '20 GWh', 'Production'], ['Texas', 'Megapack (Megapack 3 / Megablock)', '50 GWh', 'Production'], ['California (Fremont)', 'Optimus', 'n/a', 'Early ramp'], ['Texas', 'Optimus', 'n/a', 'Construction']],
+  /* Coming up (future catalysts) — refreshed every Mon–Sat scan. date: 'YYYY-MM-DD' | 'YYYY-MM' | free text ('TBA', '2027 1H') */
+  comingUp: [
+    {date: '2026-11', headline: 'Cybercab Dallas', detail: 'Cybercab Robotaxi rides in Dallas due this month (Elluswamy, Q3 call)', url: U.q3call},
+    {date: 'Early Nov 2026', headline: 'China sales', detail: 'CPCA Tesla China October wholesale/export data (date not announced)'},
+    {date: '2026-12-03', headline: 'Annual meeting', detail: 'Annual shareholder meeting: re-election of Musk, Denholm and Straubel and other proposals', url: U.tnorth},
+    {date: '2026-12', headline: 'FSD Europe', detail: 'EU TCMV meeting: earliest possible EU-wide FSD vote; Norway’s NPRA says a vote is “still not decided”', url: U.norway},
+    {date: '2026-12', headline: 'Cybercab', detail: 'Target to get Cybercabs to customers by end-2026 (Moravy, Q3 call: “trying”)', url: U.q3call},
+    {date: 'TBA', headline: 'NHTSA', detail: 'NHTSA next step on Tesla’s Cybercab Special Order (AQ26002) answers; not public as of 3 Nov', url: U.cabhwy},
+    {date: 'TBA', headline: 'Merger', detail: 'SpaceX–Tesla special committees: no timeline or terms disclosed', url: U.merger},
+    {date: '2027 Q1', headline: 'FSD Europe', detail: 'Musk “would be surprised” if EU-wide approval takes longer than Q1 2027', url: U.q3call},
+    {date: '2027 1H', headline: 'Merger', detail: 'Bloomberg: advisers push to announce a SpaceX–Tesla deal in 1H 2027', url: U.mergertnw}
+  ],
   whatsNewThisWeek: [
     {date: '2 Nov 2026', headline: 'Robotaxi', detail: 'Tesla launched unsupervised Model Y Robotaxi rides (no safety monitor) in Fort Worth at 6 a.m. CT on 2 Nov, its seventh unsupervised city and first new one in about three months; the ≈143 sq mi zone is Tesla’s third-largest after Austin (272) and Houston (254). Fort Worth was not on Tesla’s published “coming soon” list; Cybercab rides in Dallas are still due this month.', url: U.fortworth},
     {date: '2 Nov 2026', headline: 'Share price', detail: 'TSLA rose 1.00% to US$403.82 (range US$397.61–414.23, 43.1m shares), market cap ≈US$1.60tn. StockAnalysis average target now US$413.10 (44 analysts, Buy); MarketBeat US$414.51 (49 analysts, Moderate Buy).', url: U.px1102},

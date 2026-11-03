@@ -267,11 +267,11 @@ function weekCard() {
 function comingKey(d) { if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d; if (/^\d{4}-\d{2}$/.test(d)) return d + '-31'; const y = String(d).match(/(\d{4})/); return y ? y[1] + (/1H|Q1/.test(d) ? '-06' : '-12') + '-99' : '9999'; }
 function comingCard() {
   const today = new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10);
-  const cat = D.catalysts.filter(c => !(/^\d{4}-\d{2}(-\d{2})?$/.test(c[0])) || comingKey(c[0]) >= today).sort((a, b) => comingKey(a[0]).localeCompare(comingKey(b[0])));
+  const iso = d => /^\d{4}-\d{2}(-\d{2})?$/.test(d);
+  const cat = (D.comingUp || []).filter(c => !iso(c.date) || comingKey(c.date) >= today).sort((a, b) => comingKey(a.date).localeCompare(comingKey(b.date)));
   const lab = d => /^\d{4}-\d{2}-\d{2}$/.test(d) ? dlong(d) : /^\d{4}-\d{2}$/.test(d) ? new Date(d + '-15').toLocaleDateString('en-GB', {month: 'short', year: 'numeric'}) : d;
-  const li = cat.map(c => `<li><b>${esc(lab(c[0]))}</b> <span class="pill upcoming">${esc(c[1])}</span> ${esc(c[2])} <span style="font-size:12px">${ext(c[3])}</span></li>`).join('');
-  const nx = (D.next || []).map(r => `<li><b>${esc(r[0])}</b> · ${esc(r[1])}</li>`).join('');
-  return card('cu', 'Coming up', 'future catalysts · dated first', `<ul class="lst">${li}</ul>${nx ? `<h3>Also watching</h3><ul class="lst">${nx}</ul>` : ''}`);
+  const li = cat.map(c => `<li><b>${esc(lab(c.date))}</b> <span class="pill upcoming">${esc(c.headline)}</span> ${esc(c.detail || '')} ${c.url ? `<span style="font-size:12px">${ext(c.url)}</span>` : ''}</li>`).join('') || '<li class="na">No dated catalysts.</li>';
+  return card('cu', 'Coming up', 'future catalysts · soonest first', `<ul class="lst">${li}</ul>`);
 }
 function videoCard(n) {
   const V = D.videos || {rows: []}; const rows = n ? V.rows.slice(0, n) : V.rows;
