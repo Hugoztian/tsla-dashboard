@@ -254,11 +254,24 @@ F.services_cogs_safe = i => F.serv_cogs[i];
 const hiDPR = {devicePixelRatio: Math.max(2, window.devicePixelRatio || 1)};
 Chart.defaults.devicePixelRatio = hiDPR.devicePixelRatio;
 
+const WNMON = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+/* end date of an item's date label ('29–30 Oct 2026', '30 Oct – 1 Nov 2026') as SGT ms */
+function wnEnd(d) { const m = String(d).match(/(\d{1,2})\s+([A-Z][a-z]{2})[a-z]*\s+(\d{4})\s*$/); return m ? Date.UTC(+m[3], WNMON[m[2]], +m[1]) - 8 * 3600e3 : 0; }
 function weekCard() {
   const src = (lab, u) => `${esc(lab)} <span style="font-size:12px">${ext(u)}</span>`;
-  const li = D.whatsNewThisWeek.map(r => `<li><span class="mut" style="font-size:12px">${esc(r.date)} · ${esc(r.headline)}</span><br>${r.detail ? src(r.detail, r.url) : (r.url ? ext(r.url) : '')}</li>`).join('');
-  const nx = D.next.map(r => `<li><b>${esc(r[0])}</b> · ${esc(r[1])}</li>`).join('');
-  return card('wk', 'What’s new this week', D.week_label || 'last 7 days · newest first', `<div class="grid g2"><div><ul class="lst">${li}</ul></div><div><h3 style="margin-top:0">Coming up</h3><ul class="lst">${nx}</ul></div></div>`);
+  const now = Date.now(), DAY = 864e5;
+  const rows = D.whatsNewThisWeek.map((r, i) => ({r, i, t: wnEnd(r.date)})).filter(o => !o.t || now - o.t < 8 * DAY).sort((a, b) => b.t - a.t || a.i - b.i);
+  const li = rows.map(({r, t}) => { const fresh = t && now - (t + DAY) <= 2 * DAY; return `<li class="${fresh ? 'wn-new' : 'wn-old'}"><span style="font-size:12px" class="${fresh ? '' : 'mut'}">${esc(r.date)} · <b>${esc(r.headline)}</b>${fresh ? ' <span class="wn-tag">≤48h</span>' : ''}</span><br>${r.detail ? src(r.detail, r.url) : (r.url ? ext(r.url) : '')}</li>`; }).join('');
+  return card('wk', 'What’s new this week', 'last 7 days · newest first · blue = last 48h', `<style>.wn-new{color:#1e6fe0;border-left:3px solid #1e6fe0;padding-left:8px}.wn-new a{color:#1e6fe0}.wn-tag{font-size:10px;background:#1e6fe0;color:#fff;border-radius:6px;padding:0 5px}</style><ul class="lst">${li}</ul>`);
+}
+function comingKey(d) { if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d; if (/^\d{4}-\d{2}$/.test(d)) return d + '-31'; const y = String(d).match(/(\d{4})/); return y ? y[1] + (/1H|Q1/.test(d) ? '-06' : '-12') + '-99' : '9999'; }
+function comingCard() {
+  const today = new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10);
+  const cat = D.catalysts.filter(c => !(/^\d{4}-\d{2}(-\d{2})?$/.test(c[0])) || comingKey(c[0]) >= today).sort((a, b) => comingKey(a[0]).localeCompare(comingKey(b[0])));
+  const lab = d => /^\d{4}-\d{2}-\d{2}$/.test(d) ? dlong(d) : /^\d{4}-\d{2}$/.test(d) ? new Date(d + '-15').toLocaleDateString('en-GB', {month: 'short', year: 'numeric'}) : d;
+  const li = cat.map(c => `<li><b>${esc(lab(c[0]))}</b> <span class="pill upcoming">${esc(c[1])}</span> ${esc(c[2])} <span style="font-size:12px">${ext(c[3])}</span></li>`).join('');
+  const nx = (D.next || []).map(r => `<li><b>${esc(r[0])}</b> · ${esc(r[1])}</li>`).join('');
+  return card('cu', 'Coming up', 'future catalysts · dated first', `<ul class="lst">${li}</ul>${nx ? `<h3>Also watching</h3><ul class="lst">${nx}</ul>` : ''}`);
 }
 function videoCard(n) {
   const V = D.videos || {rows: []}; const rows = n ? V.rows.slice(0, n) : V.rows;
@@ -313,6 +326,7 @@ function overview() {
     ['Elon Musk', `${D.musk.own_pct}% of shares (${fmt(D.musk.own_m, 1)}m) + 2025 CEO award of 423.7m restricted shares`, 'Jun 2026']];
   sec('overview').innerHTML = `<h2>Overview</h2>
   ${weekCard()}
+  ${comingCard()}
   <p class="lead">Tesla makes EVs (Model 3/Y, Cybertruck, Semi), energy storage (Megapack, Powerwall) and is betting its valuation on <b>autonomy</b> (FSD, Robotaxi, Cybercab) and <b>Optimus</b> robots. Car volumes are recovering but margins are thin and capex has surged; regulators and the new <b>SpaceX merger review</b> are the swing factors.</p>
   <div class="grid g2" style="margin-bottom:16px">
     <div class="card"><h3>Key numbers (with dates)</h3>${tableBlock({columns: ['Metric', 'Value', 'As of'], rows: keyRows}, {id: 'tKey', csvname: 'Key numbers', wrap: true, cls: 'keyt'})}</div>
