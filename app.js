@@ -279,7 +279,7 @@ function comingCard() {
 function videoCard(n) {
   const V = D.videos || {rows: []}; const rows = n ? V.rows.slice(0, n) : V.rows;
   const li = rows.map(r => `<li><span class="mut" style="font-size:12px">${esc(r[0])} · ${esc(r[1])}</span><br><a href="${esc(r[3])}" target="_blank" rel="noopener">${esc(r[2])}</a><br><span style="font-size:13px">${esc(r[4])}</span></li>`).join('') || '<li class="na">No material videos captured.</li>';
-  return card('yt', 'YouTube / video', `material segments · newest first · as of ${V.asof || 'n/a'}`, `<ul class="lst">${li}</ul><div class="mut" style="font-size:11.5px;margin-top:8px">Takeaways are drawn from each video’s captions/transcript or its YouTube description, not from watching it. Commentary and opinions are the speakers’ own${n && V.rows.length > n ? ` · <a href="#video">all ${V.rows.length} videos</a>` : ''}.</div>`);
+  return card('yt', 'YouTube / video', `material segments · newest first · as of ${V.asof || 'n/a'}`, `<ul class="lst">${li}</ul><div class="mut" style="font-size:11.5px;margin-top:8px">Takeaways are drawn from each video’s captions/transcript or its YouTube description, not from watching it. Commentary and opinions are the speakers’ own${n && V.rows.length > n ? ` · <a href="#people/video">all ${V.rows.length} videos</a>` : ''}.</div>`);
 }
 function videoTab() { sec('video').innerHTML = `<h2>YouTube / video <span class="mut">earnings follow-ups, exec interviews, TV segments, analyst channels</span></h2>${videoCard()}`; }
 function promiseCard(filter) {
@@ -303,8 +303,8 @@ function hero() {
     `<div class="hcard"><div class="l">Q3 2026 deliveries</div><div class="v">${fmt(O.deliv[6])}</div><div class="ch neg">${pct((O.deliv[6] / O.deliv[2] - 1) * 100)} YoY</div><div class="s">${pct((O.deliv[6] / O.deliv[5] - 1) * 100)} QoQ · production ${fmt(O.prod[6])} · storage ${O.storage[6]} GWh</div><div class="asof">P&D release, 2 Oct 2026</div></div>`].join('');
   $('#hero2').innerHTML = [
     `<div class="mini"><div class="l">Active FSD subscriptions</div><div class="v">1.74m</div><div class="s">Q3 2026 · +67% YoY · &gt;75% NA paid attach</div></div>`,
-    `<div class="mini"><div class="l">Cybercabs in Austin</div><div class="v">300+</div><div class="s">10 Oct 2026 · 8x in 30 days · <a href="#robotaxi">Robotaxi tab</a></div></div>`,
-    `<div class="mini"><div class="l">Elon Musk stake</div><div class="v">${fmt(D.musk.own_pct, 2)}%</div><div class="s">${fmt(D.musk.own_m, 1)}m shares · plus 423.7m-share 2025 award · <a href="#own">Ownership</a></div></div>`,
+    `<div class="mini"><div class="l">Cybercabs in Austin</div><div class="v">300+</div><div class="s">10 Oct 2026 · 8x in 30 days · <a href="#autonomy/robotaxi">Robotaxi tab</a></div></div>`,
+    `<div class="mini"><div class="l">Elon Musk stake</div><div class="v">${fmt(D.musk.own_pct, 2)}%</div><div class="s">${fmt(D.musk.own_m, 1)}m shares · plus 423.7m-share 2025 award · <a href="#fin/own">Ownership</a></div></div>`,
     `<div class="mini"><div class="l">SpaceX–Tesla merger</div><div class="v">Under review</div><div class="s">Special committees formed 20 Oct · no terms</div></div>`].join('');
   try { I18N.apply($('#hero4')); I18N.apply($('#hero2')); } catch (e) { console.error('i18n hero', e); }
   clearInterval(CDT);
@@ -535,15 +535,23 @@ const done = {}; let CDT = null;
 function cdText(t) { let s = Math.max(0, Math.floor((t - new Date()) / 1000)); const d = Math.floor(s / 86400); s -= d * 86400; const h = Math.floor(s / 3600); s -= h * 3600; const m = Math.floor(s / 60); s -= m * 60;
   const u = ['d', 'h', 'm', 's'];
   return `${d}<small>${u[0]}</small>${String(h).padStart(2, '0')}<small>${u[1]}</small>${String(m).padStart(2, '0')}<small>${u[2]}</small>${String(s).padStart(2, '0')}<small>${u[3]}</small>`; }
+const GROUPS = [['overview', 'Overview', [['overview', 'Overview']]], ['autos', 'Autos & Energy', [['autos', 'Autos'], ['energy', 'Energy'], ['comp', 'Competition']]],
+  ['autonomy', 'Autonomy', [['robotaxi', 'Cybercab'], ['fsd', 'FSD'], ['optimus', 'Optimus']]], ['fin', 'Financials', [['fin', 'Statements'], ['val', 'Valuation'], ['own', 'Ownership']]],
+  ['people', 'People & Video', [['people', 'Key people'], ['video', 'Video']]], ['calendar', 'Calendar & Sources', [['catalysts', 'Catalysts'], ['sources', 'Sources']]]];
+const grpOf = sub => GROUPS.find(g => g[2].some(x => x[0] === sub));
 function route() {
-  let id = (location.hash || '#overview').slice(1).split('/')[0]; if (!TABS.some(t => t[0] === id)) id = 'overview';
-  $$('#nav a').forEach(a => { const on = a.dataset.t === id; a.classList.toggle('on', on); if (on) a.scrollIntoView({block: 'nearest', inline: 'center'}); });
+  const parts = (location.hash || '#overview').slice(1).split('/'); let g = GROUPS.find(x => x[0] === parts[0]), id;
+  if (g) id = g[2].some(x => x[0] === parts[1]) ? parts[1] : g[2][0][0];
+  else { id = TABS.some(t => t[0] === parts[0]) ? parts[0] : 'overview'; g = grpOf(id); }
+  $$('#nav a').forEach(a => { const on = a.dataset.t === g[0]; a.classList.toggle('on', on); if (on) a.scrollIntoView({block: 'nearest', inline: 'center'}); });
   $$('main section').forEach(s => s.classList.toggle('on', s.id === 's-' + id));
   const t = TABS.find(t => t[0] === id);
-  if (!done[id]) { try { t[2](); } catch (e) { console.error('render ' + id, e); sec(id).insertAdjacentHTML('beforeend', `<div class="tvfail">This tab could not render: ${esc(e.message)}</div>`); } done[id] = 1; wireTables(sec(id)); wireXall(sec(id)); try { I18N.apply(sec(id)); } catch (e) { console.error('i18n ' + id, e); } }
-  document.title = tl(`${t[1]} · Tesla (TSLA) Dashboard · © 2026 Hugo Tian`);
+  if (!done[id]) { try { t[2](); } catch (e) { console.error('render ' + id, e); sec(id).insertAdjacentHTML('beforeend', `<div class="tvfail">This tab could not render: ${esc(e.message)}</div>`); } done[id] = 1;
+    if (g[2].length > 1) sec(id).insertAdjacentHTML('afterbegin', `<div class="subtabs">${g[2].map(([sid, l]) => `<button class="${sid === id ? 'on' : ''}" onclick="location.hash='#${g[0]}/${sid}'">${esc(l)}</button>`).join('')}</div>`);
+    wireTables(sec(id)); wireXall(sec(id)); try { I18N.apply(sec(id)); } catch (e) { console.error('i18n ' + id, e); } }
+  document.title = tl(`${g[1]}${g[2].length > 1 ? ' · ' + t[1] : ''} · Tesla (TSLA) Dashboard · © 2026 Hugo Tian`);
 }
-function buildNav() { $('#nav').innerHTML = TABS.map(([id, l]) => `<a href="#${id}" data-t="${id}" title="${esc(l)}">${esc(NAVL[id] || l)}</a>`).join(''); $('#main').innerHTML = TABS.map(([id]) => `<section id="s-${id}"></section>`).join(''); I18N.apply($('#nav')); chrome(); }
+function buildNav() { $('#nav').innerHTML = GROUPS.map(([id, l]) => `<a href="#${id}" data-t="${id}" title="${esc(l)}">${esc(l)}</a>`).join(''); $('#main').innerHTML = TABS.map(([id]) => `<section id="s-${id}"></section>`).join(''); I18N.apply($('#nav')); chrome(); }
 function chrome() {
   $('.hero h1').innerHTML = tl('Tesla <span class="tk">$TSLA</span> Dashboard'); $('.brand .bn').textContent = tl('Dashboard');
   $('.brand').setAttribute('aria-label', tl('Tesla dashboard home'));
