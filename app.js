@@ -245,7 +245,7 @@ const qs = q => q.replace(/^Q(\d) 20(\d{2})$/, "Q$1'$2");
 const nz = v => v == null ? null : v;
 const pctf = (v, d = 1) => v == null ? 'pending' : fmt(v, d) + '%';
 const sec = id => $('#s-' + id);
-const card = (id, title, sub, body) => `<div class="card" id="${id}" style="margin:16px 0"><h3 style="margin-top:0">${esc(title)} ${sub ? `<span class="mut">${esc(sub)}</span>` : ''}</h3>${body}</div>`;
+const card = (id, title, sub, body) => `<div class="card cardblock" id="${id}"><h3 style="margin-top:0">${esc(title)} ${sub ? `<span class="mut">${esc(sub)}</span>` : ''}</h3>${body}</div>`;
 const ul = (rows) => `<ul class="lst">${rows.map(r => `<li>${r}</li>`).join('')}</ul>`;
 const scoreCls = s => /^Met/.test(s) ? 'ok' : /^Behind/.test(s) ? 'bad' : 'mut';
 const egm = i => F.energy[i] == null ? null : +((F.energy[i] - F.energy_cogs[i]) / F.energy[i] * 100).toFixed(1);
@@ -265,7 +265,7 @@ function weekCard() {
     const head = r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.headline)}</a>` : esc(r.headline);
     return `<li class="${fresh ? 'new48' : ''}"><span class="d">${esc(r.date)}</span>${fresh ? '<span class="nb">48h</span>' : ''}${head}${r.detail ? `<div class="src">${esc(r.detail)}</div>` : ''}</li>`;
   }).join('');
-  return `<div class="card" id="whatsnew" style="margin:16px 0;border-left:4px solid var(--acc)"><h3 style="margin-top:0">What’s new this week</h3><ul class="week">${li}</ul><p class="src" style="margin-top:10px">Last 7 days · newest first · ≤48h items use Tesla red (<code>var(--acc)</code>). Updated ${esc(D.lastUpdated || '')} SGT.</p></div>`;
+  return `<div class="card weekcard" id="whatsnew" style="border-left:4px solid var(--acc)"><h3 style="margin-top:0">What’s new this week</h3><ul class="week">${li}</ul><p class="src" style="margin-top:10px">Last 7 days · newest first · ≤48h items use Tesla red (<code>var(--acc)</code>). Updated ${esc(D.lastUpdated || '')} SGT.</p></div>`;
 }
 function comingKey(d) { if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d; if (/^\d{4}-\d{2}$/.test(d)) return d + '-31'; const y = String(d).match(/(\d{4})/); return y ? y[1] + (/1H|Q1/.test(d) ? '-06' : '-12') + '-99' : '9999'; }
 function comingCard() {
@@ -293,7 +293,8 @@ function promiseCard(filter) {
 /* ---------------- hero ---------------- */
 function hero() {
   const P = D.price;
-  $('#updated').innerHTML = `<strong>Last updated: ${esc(D.lastUpdated || 'n/a')}</strong> · © 2026 Hugo Tian. All rights reserved.`;
+  $('#lastupd').innerHTML = `Last updated: <b>${esc(D.lastUpdated || 'n/a')}</b>`;
+  $('#updated').innerHTML = `© 2026 Hugo Tian. All rights reserved.`;
   $('#hero4').innerHTML = [
     `<div class="hcard live"><div id="lq" class="lq" aria-live="polite" style="display:none"><div class="lq-top"><span class="lq-sess"><i class="lq-dot"></i><span id="lq-sl">Connecting to live quote…</span></span><span class="lq-sym">TSLA · Nasdaq</span></div>
        <div class="lq-row"><span class="lq-k" id="lq-k"></span><span class="lq-px" id="lq-px">—</span><span class="lq-ch" id="lq-ch"></span></div><div class="lq-sub" id="lq-sub"></div><div class="lq-cap" id="lq-cap"></div></div>
@@ -328,20 +329,21 @@ function overview() {
     ['Analysts (TipRanks, third-party)', `Moderate Buy · avg target US$${D.street.tip.avg} (${D.street.tip.buy} buy / ${D.street.tip.hold} hold / ${D.street.tip.sell} sell)`, 'Oct 2026'],
     ['Elon Musk', `${D.musk.own_pct}% of shares (${fmt(D.musk.own_m, 1)}m) + 2025 CEO award of 423.7m restricted shares`, 'Jun 2026']];
   sec('overview').innerHTML = `<h2>Overview</h2>
-  ${weekCard()}
-  ${comingCard()}
+  <div class="ov-wn">${weekCard()}${comingCard()}</div>
   <p class="lead">Tesla makes EVs (Model 3/Y, Cybertruck, Semi), energy storage (Megapack, Powerwall) and is betting its valuation on <b>autonomy</b> (FSD, Robotaxi, Cybercab) and <b>Optimus</b> robots. Car volumes are recovering but margins are thin and capex has surged; regulators and the new <b>SpaceX merger review</b> are the swing factors.</p>
   <div class="grid g2" style="margin-bottom:16px">
     <div class="card"><h3>Key numbers (with dates)</h3>${tableBlock({columns: ['Metric', 'Value', 'As of'], rows: keyRows}, {id: 'tKey', csvname: 'Key numbers', wrap: true, cls: 'keyt'})}</div>
     <div class="card"><h3>Key takeaways</h3><ul class="lst">${D.takeaways.map(t => `<li>${esc(t)}</li>`).join('')}</ul><div class="mut" style="font-size:11.5px;margin-top:8px">Sources: Tesla quarterly updates, P&D releases and the tabs of this dashboard.</div></div></div>
   ${videoCard(4)}
   <div class="card" style="margin:16px 0;border-left:3px solid var(--acc)"><h3 style="margin-top:0">SpaceX–Tesla merger review</h3>${tableBlock({columns: ['Item', 'Status'], rows: [['Status', D.merger.status], ['Terms / exchange ratio', 'pending (not disclosed)'], ['Approval needed', D.merger.vote], ['Source', D.merger.src]]}, {id: 'tMerge', wrap: true})}</div>
-  <div class="grid g2" style="margin-bottom:16px">${ccard('ovDel', 'Deliveries and production by quarter', 'Tesla P&D releases')}${ccard('ovRev', 'Revenue by segment (US$m)', 'Tesla quarterly updates')}</div>
-  <div class="card"><h3 style="margin-top:0">TSLA live chart <span class="mut" style="font-size:12px;font-weight:400">${TV_SYM} · TradingView</span></h3><div class="tvchart" id="tvchart"></div></div>`;
+  <div class="grid g2" style="margin-bottom:16px">${ccard('ovDel', 'Deliveries and production by quarter', 'Tesla P&D releases')}${ccard('ovRev', 'Revenue by segment (US$m)', 'Tesla quarterly updates')}</div>`;
   delivChart('ovDel'); revChart('ovRev');
-  tvEmbed($('#tvchart'), 'advanced-chart', {autosize: true, symbol: TV_SYM, interval: 'D', range: '6M', timezone: 'Asia/Singapore', theme: tvTheme(), style: '1', locale: I18N.tvLocale(),
+}
+function mountLiveChart(el) {
+  if (!el) return;
+  tvEmbed(el, 'advanced-chart', {autosize: true, symbol: TV_SYM, interval: 'D', range: '6M', timezone: 'Asia/Singapore', theme: tvTheme(), style: '1', locale: I18N.tvLocale(),
     backgroundColor: isDark() ? 'rgba(22,22,23,1)' : 'rgba(255,255,255,1)', gridColor: isDark() ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.035)', allow_symbol_change: false, hide_side_toolbar: true, calendar: false, support_host: 'https://www.tradingview.com'},
-    why => { $('#tvchart').innerHTML = `<div class="tvfail">Live chart unavailable (${esc(why)}).</div><div class="mut" style="font-size:12px">Snapshot: close US$${fmt(D.price.close, 2)} on ${esc(dlong(D.price.close_date))} · not live</div>`; $('#tvchart').style.height = 'auto'; });
+    why => { el.innerHTML = `<div class="tvfail">Live chart unavailable (${esc(why)}).</div><div class="mut" style="font-size:12px">Snapshot: close US$${fmt(D.price.close, 2)} on ${esc(dlong(D.price.close_date))} · not live</div>`; el.style.height = 'auto'; });
 }
 function delivChart(id) { chart(id, {type: 'bar', data: {labels: D.Q.map(qs), datasets: [{label: 'Deliveries', data: O.deliv, backgroundColor: C.acc}, {label: 'Production', data: O.prod, backgroundColor: C.g3}]}, options: {plugins: {tooltip: {callbacks: {label: c => `${c.dataset.label}: ${fmt(c.raw)}`}}}}}); }
 function revChart(id) { chart(id, {type: 'bar', data: {labels: D.fcols.map(qs), datasets: [{label: 'Automotive', data: F.auto, backgroundColor: C.acc}, {label: 'Energy generation & storage', data: F.energy, backgroundColor: C.g2}, {label: 'Services & other', data: F.services, backgroundColor: C.g3}]},
@@ -472,10 +474,12 @@ function valTab() {
     ${kpi('Average price target', 'US$' + S.tip.avg, `TipRanks · ${S.tip.buy} buy / ${S.tip.hold} hold / ${S.tip.sell} sell`, S.tip.src)}${kpi('Options-implied move', '±' + S.implied_move + '%', 'around Q3 results (TipRanks)', S.tip.src)}</div>
   <div class="grid g2" style="margin-bottom:16px">${ccard('vaEv', 'EV / sales vs peers (x)', 'LTM · StockAnalysis (S&P Global MI)')}${ccard('vaPe', 'Forward P/E vs peers (x)', 'n/a for loss-making Rivian')}</div>
   ${tableBlock({title: 'Peer multiples', columns: ['Company', 'Market cap', 'P/E (ttm)', 'P/E (fwd)', 'EV/sales', 'EV/EBITDA', 'Gross margin %', 'Price', 'Source'], rows: D.peers}, {id: 'tPeer', notes: ['Source: StockAnalysis.com statistics pages (data from S&P Global Market Intelligence), checked 21 Oct 2026 (SGT). Third-party; BYD in HKD.']})}
-  ${tableBlock({title: 'Recent analyst actions', columns: ['Date', 'Firm', 'Rating', 'Target', 'Source'], rows: S.actions}, {id: 'tAn', notes: [`Third-party compilations: TeslaNewsWire ${S.src} and TipRanks ${S.tip.src} . Range of targets in MarketBeat data: US$${S.lo} (GLJ Research) to US$${S.hi} (Morgan Stanley, rating unconfirmed). StockAnalysis: average US$${D.street.sa.avg} from ${D.street.sa.n} analysts.`]})}`;
+  ${tableBlock({title: 'Recent analyst actions', columns: ['Date', 'Firm', 'Rating', 'Target', 'Source'], rows: S.actions}, {id: 'tAn', notes: [`Third-party compilations: TeslaNewsWire ${S.src} and TipRanks ${S.tip.src} . Range of targets in MarketBeat data: US$${S.lo} (GLJ Research) to US$${S.hi} (Morgan Stanley, rating unconfirmed). StockAnalysis: average US$${D.street.sa.avg} from ${D.street.sa.n} analysts.`]})}
+  <div class="card" id="livechart" style="margin:16px 0"><h3 style="margin-top:0">Live price chart (TradingView) <span class="mut" style="font-size:12px;font-weight:400">${TV_SYM} · daily, 6M default</span></h3><div class="tvchart" id="tvchart"></div></div>`;
   const pr = D.peers;
   chart('vaEv', {type: 'bar', data: {labels: pr.map(r => r[0]), datasets: [{label: 'EV / sales', data: pr.map(r => r[4]), backgroundColor: pr.map((r, k) => k ? C.g3 : C.acc)}]}, options: {indexAxis: 'y', plugins: {legend: {display: false}}, scales: {x: {type: 'logarithmic'}}}});
   chart('vaPe', {type: 'bar', data: {labels: pr.map(r => r[0]), datasets: [{label: 'Forward P/E', data: pr.map(r => r[3]), backgroundColor: pr.map((r, k) => k ? C.g3 : C.acc)}]}, options: {indexAxis: 'y', plugins: {legend: {display: false}}, scales: {x: {type: 'logarithmic'}}}});
+  mountLiveChart($('#tvchart'));
 }
 
 /* ---------------- ownership, insiders, short interest ---------------- */
@@ -539,8 +543,14 @@ const GROUPS = [['overview', 'Overview', [['overview', 'Overview']]], ['autos', 
   ['autonomy', 'Autonomy', [['robotaxi', 'Cybercab'], ['fsd', 'FSD'], ['optimus', 'Optimus']]], ['fin', 'Financials', [['fin', 'Statements'], ['val', 'Valuation'], ['own', 'Ownership']]],
   ['people', 'People & Video', [['people', 'Key people'], ['video', 'Video']]], ['calendar', 'Calendar & Sources', [['catalysts', 'Catalysts'], ['sources', 'Sources']]]];
 const grpOf = sub => GROUPS.find(g => g[2].some(x => x[0] === sub));
+/* old/new hashes for the live TradingView chart (moved Overview → Financials > Valuation) */
+const CHART_ALIAS = {'chart': 'fin/val', 'tvchart': 'fin/val', 'livechart': 'fin/val', 'live-chart': 'fin/val', 'price': 'fin/val', 'overview/chart': 'fin/val'};
 function route() {
-  const parts = (location.hash || '#overview').slice(1).split('/'); let g = GROUPS.find(x => x[0] === parts[0]), id;
+  let raw = (location.hash || '#overview').slice(1);
+  let jumpChart = false;
+  if (CHART_ALIAS[raw]) { jumpChart = true; history.replaceState(null, '', '#' + CHART_ALIAS[raw]); raw = CHART_ALIAS[raw]; }
+  else if (raw === 'overview/chart' || /^chart(\/|$)/.test(raw)) { jumpChart = true; history.replaceState(null, '', '#fin/val'); raw = 'fin/val'; }
+  const parts = raw.split('/'); let g = GROUPS.find(x => x[0] === parts[0]), id;
   if (g) id = g[2].some(x => x[0] === parts[1]) ? parts[1] : g[2][0][0];
   else { id = TABS.some(t => t[0] === parts[0]) ? parts[0] : 'overview'; g = grpOf(id); }
   $$('#nav a').forEach(a => { const on = a.dataset.t === g[0]; a.classList.toggle('on', on); if (on) a.scrollIntoView({block: 'nearest', inline: 'center'}); });
@@ -549,6 +559,7 @@ function route() {
   if (!done[id]) { try { t[2](); } catch (e) { console.error('render ' + id, e); sec(id).insertAdjacentHTML('beforeend', `<div class="tvfail">This tab could not render: ${esc(e.message)}</div>`); } done[id] = 1;
     if (g[2].length > 1) sec(id).insertAdjacentHTML('afterbegin', `<div class="subtabs">${g[2].map(([sid, l]) => `<button class="${sid === id ? 'on' : ''}" onclick="location.hash='#${g[0]}/${sid}'">${esc(l)}</button>`).join('')}</div>`);
     wireTables(sec(id)); wireXall(sec(id)); try { I18N.apply(sec(id)); } catch (e) { console.error('i18n ' + id, e); } }
+  if (jumpChart) setTimeout(() => { const el = $('#tvchart') || $('#livechart'); if (el) el.scrollIntoView({block: 'start'}); }, 80);
   document.title = tl(`${g[1]}${g[2].length > 1 ? ' · ' + t[1] : ''} · Tesla (TSLA) Dashboard · © 2026 Hugo Tian`);
 }
 function buildNav() { $('#nav').innerHTML = GROUPS.map(([id, l]) => `<a href="#${id}" data-t="${id}" title="${esc(l)}">${esc(l)}</a>`).join(''); $('#main').innerHTML = TABS.map(([id]) => `<section id="s-${id}"></section>`).join(''); I18N.apply($('#nav')); chrome(); }

@@ -8,16 +8,16 @@
 <meta name="description" content="Tesla, Inc. (Nasdaq: TSLA) investor dashboard: live price, autos, energy, Cybercab and Robotaxi, FSD, Optimus, key people, valuation, ownership and short interest.">
 <meta name="copyright" content="© 2026 Hugo Tian. All rights reserved.">
 <meta name="color-scheme" content="light dark">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=1794182176">
-<link rel="apple-touch-icon" href="icon-180.png?v=1794182176">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=1794196225">
+<link rel="apple-touch-icon" href="icon-180.png?v=1794196225">
 <script>(function(){var h=document.documentElement;try{var t=localStorage.getItem('tsla-theme');if(t==='light'||t==='dark')h.dataset.theme=t;}catch(e){}
 if(/[?&]collect=1/.test(location.search))window.__I18N_COLLECT=new Set();})();</script>
 <script src="vendor/chart.umd.min.js"></script>
 <script src="vendor/hammer.min.js"></script>
 <script src="vendor/chartjs-plugin-zoom.min.js"></script>
 <script src="vendor/chartjs-plugin-annotation.min.js"></script>
-<script src="data.js?v=1794182176"></script>
-<script src="x_feed.js?v=1794182176"></script>
+<script src="data.js?v=1794196225"></script>
+<script src="x_feed.js?v=1794196225"></script>
 <style>
 /* Minimal Apple-style system: neutral surfaces, whitespace over lines, one Tesla red as the only accent */
 :root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -58,6 +58,12 @@ nav a.on{color:var(--acc);opacity:1;font-weight:600;background:var(--accsoft)}
 .hero h1 .tk{color:var(--acc)}
 .hero .sub{color:var(--mut2);font-size:13px}
 .hero .sub b{color:var(--mut);font-weight:600}
+.lastupd{margin:0 0 10px;color:var(--mut2);font-size:13px}.lastupd b{color:var(--mut);font-weight:600}
+/* Overview: What's new + Coming up side by side on desktop, stacked on mobile */
+.ov-wn{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;align-items:stretch}
+.weekcard,.cardblock{margin:16px 0}
+.ov-wn > .card{margin:0;height:100%}
+@media (max-width:760px){.ov-wn{grid-template-columns:1fr}}
 .h4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:36px}
 .hcard{background:var(--panel);border-radius:22px;padding:20px 22px 18px;box-shadow:var(--shadow);min-width:0;position:relative;display:flex;flex-direction:column}
 .hcard .l{color:var(--mut);font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px}
@@ -270,8 +276,8 @@ footer .flink{color:var(--mut)}footer .flink:hover{color:var(--acc)}
 </style>
 </head>
 <body>
-<header><div class="bar"><a class="brand" href="#overview" aria-label="Tesla dashboard home"><img class="mlogo" src="seal.png?v=1794182176" alt="Tesla" width="28" height="28"><span class="bn">Dashboard</span></a><nav id="nav"></nav><div class="hbtns"><button class="themebtn" id="themebtn" title="Theme: follows your system until you pick one"><span id="themeic">◐</span><span class="tl2" id="themelbl">Auto</span></button></div></div></header>
-<div class="hero"><h1>Tesla <span class="tk">$TSLA</span> Dashboard</h1>
+<header><div class="bar"><a class="brand" href="#overview" aria-label="Tesla dashboard home"><img class="mlogo" src="seal.png?v=1794196225" alt="Tesla" width="28" height="28"><span class="bn">Dashboard</span></a><nav id="nav"></nav><div class="hbtns"><button class="themebtn" id="themebtn" title="Theme: follows your system until you pick one"><span id="themeic">◐</span><span class="tl2" id="themelbl">Auto</span></button></div></div></header>
+<div class="hero"><p class="lastupd" id="lastupd"></p><h1>Tesla <span class="tk">$TSLA</span> Dashboard</h1>
   <div class="sub" id="updated"></div>
   <div class="h4" id="hero4"></div>
   <div class="h2row" id="hero2"></div>
@@ -279,6 +285,6 @@ footer .flink{color:var(--mut)}footer .flink:hover{color:var(--acc)}
 <main id="main"></main>
 <footer id="foot"></footer>
 <div id="tip" role="tooltip"></div>
-<script src="app.js?v=1794182176"></script>
+<script src="app.js?v=1794196225"></script>
 </body>
 </html>
